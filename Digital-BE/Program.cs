@@ -48,18 +48,18 @@ app.UseAuthorization();
 app.UseAuthentication();
 
 
-app.Services.ApplyPendingMigrations();
+// app.Services.ApplyPendingMigrations();
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
+// using (var scope = app.Services.CreateScope())
+// {
+//     var services = scope.ServiceProvider;
 
-    var context = services.GetRequiredService<ApplicationDBContext>();
-    if (context.Database.GetPendingMigrations().Any())
-    {
-        context.Database.Migrate();
-    }
-}
+//     var context = services.GetRequiredService<ApplicationDBContext>();
+//     if (context.Database.GetPendingMigrations().Any())
+//     {
+//         context.Database.Migrate();
+//     }
+// }
 
 app.UseEndpoints(endpoints =>
            {
