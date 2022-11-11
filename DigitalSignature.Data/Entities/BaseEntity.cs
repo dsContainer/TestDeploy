@@ -1,5 +1,5 @@
 ﻿using System;
-namespace DigitalSignature.Data.Entities
+namespace Digital.Data.Entities
 {
     public class BaseEntity
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using DigitalSignature.Data.Entities;
+using Digital.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Digital.Data.Data
