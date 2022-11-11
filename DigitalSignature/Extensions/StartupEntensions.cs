@@ -65,25 +65,25 @@ namespace Digital_BE.Api.Extensions
             services.AddSwaggerGenNewtonsoftSupport();
         }
 
-        public static void AddJWTAuthentication(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateLifetime = true,
-                    ValidateAudience = false,
-                    RequireAudience = false,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = configuration["JWT:Issuer"],
-                    IssuerSigningKey = new
-                        SymmetricSecurityKey
-                        (Encoding.UTF8.GetBytes
-                            (configuration["JWT:Secret"]))
-                };
-            });
-        }
+        //public static void AddJWTAuthentication(this IServiceCollection services, IConfiguration configuration)
+        //{
+        //    services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+        //    {
+        //        options.TokenValidationParameters = new TokenValidationParameters
+        //        {
+        //            ValidateIssuer = true,
+        //            ValidateLifetime = true,
+        //            ValidateAudience = false,
+        //            RequireAudience = false,
+        //            ValidateIssuerSigningKey = true,
+        //            ValidIssuer = configuration["JWT:Issuer"],
+        //            IssuerSigningKey = new
+        //                SymmetricSecurityKey
+        //                (Encoding.UTF8.GetBytes
+        //                    (configuration["JWT:Secret"]))
+        //        };
+        //    });
+        //}
 
         public static void AddBusinessService(this IServiceCollection services)
         {
