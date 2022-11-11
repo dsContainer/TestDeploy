@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Digital.Data": {
+      "commandName": "Project",
+      "jsWebView2Debugging": true,
+      "sqlDebugging": true,
+      "nativeDebugging": true
+    }
+  }
+}
