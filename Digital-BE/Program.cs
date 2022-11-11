@@ -43,9 +43,9 @@ app.UseStaticFiles();
 app.UseRouting();
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+// app.UseAuthorization();
 
-app.UseAuthentication();
+// app.UseAuthentication();
 
 
 // app.Services.ApplyPendingMigrations();
