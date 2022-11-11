@@ -115,11 +115,12 @@ namespace Digital_BE.Api.Extensions
 
         public static void AddDbContext(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<ApplicationDBContext>(opt =>
-            {
-                opt.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
-                    b => b.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name));
-            });
+             services.AddDbContext<ApplicationDBContext>(
+                e =>
+                {
+                    e.EnableSensitiveDataLogging();
+                    e.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+                });
         }
 
         public static void ApplyPendingMigrations(this IServiceProvider provider)
