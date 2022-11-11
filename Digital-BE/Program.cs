@@ -39,7 +39,8 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseCors("AllowAll");
-
+app.UseStaticFiles();
+app.UseRouting();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
