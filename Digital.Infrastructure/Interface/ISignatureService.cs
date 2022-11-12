@@ -1,7 +1,6 @@
-﻿using DigitalSignature.Model;
-using DigitalSignature.Model.SignatureModel;
+﻿using Digital.Infrastructure.Model;
 
-namespace DigitalSignature.Interface
+namespace Digital.Infrastructure.Interface
 {
     public interface ISignatureService
     {
@@ -10,6 +9,5 @@ namespace DigitalSignature.Interface
         Task<ResultModel> SearchContainUserNamePhoneOrEmail(string data);
         Task<ResultModel> SearchBySignatureId(Guid sigId);
         Task<ResultModel> SearchRangeDate(string fromDate, string toDate);
-        Task<ResultModel> SignPDF(SignModel signModel);
     }
 }

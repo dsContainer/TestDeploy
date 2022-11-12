@@ -1,14 +1,11 @@
 ﻿using AutoMapper;
-using DigitalSignature.Entities;
-using DigitalSignature.Interface;
-using DigitalSignature.Model;
-using DigitalSignature.Model.SignatureModel;
-using DigitalSignature.Utilities;
+using Digital.Data.Entities;
+using Digital.Infrastructure.Interface;
+using Digital.Infrastructure.Model;
+using Digital.Infrastructure.Utilities;
 using Microsoft.EntityFrameworkCore;
-using DigitalSignature.Utilities.HSMServer;
-using DigitalSignature.Utilities;
 
-namespace DigitalSignature.Service
+namespace Digital.Infrastructure.Service
 {
     public class SignatureService : ISignatureService
     {
@@ -238,84 +235,6 @@ namespace DigitalSignature.Service
             {
                 result.IsSuccess = false;
                 result.Code = 400;
-                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
-            }
-            return result;
-        }
-
-        public async Task<ResultModel> SignPDF(SignModel signModel)
-        {
-            var result = new ResultModel();
-            try
-            {
-                /*var newProcess = new Process
-                {
-                    Id = Guid.NewGuid(),
-                    Name = "MelloTest1",
-                    Status = "Pending",
-                    CompanyLevel = "Department",
-
-                };
-                var check1 = await _context.Processes.AddAsync(newProcess);
-                if (check1 != null)
-                {
-                    var newProcessStep = new ProcessStep
-                    {
-                        Id = Guid.NewGuid(),
-                        OrderIndex = 1,
-                        UserId = Guid.Parse(""),
-                        Xpoint = 60,
-                        Ypoint = 60,
-                        Width = 60,
-                        Height = 60,
-                        PageSign = 1,
-                        DateSign = DateTime.Now,
-                        Message = null,
-                        ProcessId = newProcess.Id,
-                        XpointPercent = 0,
-                        YpointPercent = 0,
-                    };
-                    await _context.ProcessSteps.AddAsync(newProcessStep);
-                }
-                else
-                {
-                    return result;
-                }
-                await _context.SaveChangesAsync();*/
-                var signer = new PDFSigner("4288161d272f4622b23e52697346ad8d", "eHi3x+c4nQZYuVQRZV3d1WcB46aCzMQhNR4KcSpY", "hn1");
-
-                var PdfBytes = Convert.FromBase64String(SignatureUtils.convertBase64FromFile("E:\\C#\\Resources\\Signing\\samplePdf.pdf"));
-                var PdfImg = SignatureUtils.convertBase64FromImg("E:\\C#\\Resources\\Signing\\sampleImg.jpg");
-
-                var docSigned = signer.Sign(
-                        PdfBytes,
-                        signModel.Hashalg.ToString(),
-                        (int)signModel.Typesignature,
-                        PdfImg,
-                        "TextOutLeVinh",
-                        "SignatureNameLeVinh",
-                        1,
-                        60,
-                        60,
-                        60,
-                        60);
-
-                if (docSigned == null)
-                {
-                    result.IsSuccess = false;
-                    result.Code = 400;
-                    result.ResponseFailed = "Sign PDF Failed!";
-                    return result;
-                }
-
-                result.IsSuccess = true;
-                result.Code = 200;
-                result.ResponseSuccess = Convert.ToBase64String(docSigned);
-
-            }
-            catch (Exception e)
-            {
-                result.IsSuccess = false;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
             return result;

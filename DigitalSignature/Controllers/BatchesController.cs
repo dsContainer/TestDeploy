@@ -3,7 +3,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace DigitalSignature.Controllers
+namespace DigitalSignature.
+    s
 {
     [Route("api/[controller]")]
     [Authorize]

@@ -1,9 +1,8 @@
 ﻿using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.OpenSsl;
-using System.Drawing;
 using System.Security.Cryptography.X509Certificates;
 
-namespace DigitalSignature.Utilities
+namespace Digital.Infrastructure.Utilities
 {
     public class SignatureUtils
     {
@@ -46,19 +45,6 @@ namespace DigitalSignature.Utilities
             {
                 return ("Error while generating certificates. ");
             }
-        }
-
-        public static string convertBase64FromFile(string filePath)
-        {
-            Byte[] bytes = File.ReadAllBytes(filePath);
-            String file = Convert.ToBase64String(bytes);
-            return file;
-        }
-        public static string convertBase64FromImg(string filePath)
-        {
-            byte[] imageArray = System.IO.File.ReadAllBytes(filePath);
-            string base64ImageRepresentation = Convert.ToBase64String(imageArray);
-            return base64ImageRepresentation;
         }
     }
 }
