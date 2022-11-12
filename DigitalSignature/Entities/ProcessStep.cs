@@ -15,7 +15,7 @@
         public Guid? ProcessId { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
         public float XpointPercent { get; set; }
         public float YpointPercent { get; set; }
 

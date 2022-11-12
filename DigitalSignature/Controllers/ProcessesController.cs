@@ -1,118 +1,97 @@
-﻿using DigitalSignature.Entities;
-using Microsoft.AspNetCore.Authorization;
+﻿using DigitalSignature.Interface;
+using DigitalSignature.Model;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace DigitalSignature.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
     [ApiController]
-    public class ProcessesController : ControllerBase
+    public class ProcessController : ControllerBase
     {
-        private readonly DigitalSignatureDBContext _context;
+        private readonly IProcessService _service;
 
-        public ProcessesController(DigitalSignatureDBContext context)
+        public ProcessController(IProcessService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/Processes
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Process>>> GetProcesses()
-        {
-            return await _context.Processes.ToListAsync();
-        }
-
-        // GET: api/Processes/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Process>> GetProcess(Guid id)
-        {
-            var process = await _context.Processes.FindAsync(id);
-
-            if (process == null)
-            {
-                return NotFound();
-            }
-
-            return process;
-        }
-
-        // PUT: api/Processes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProcess(Guid id, Process process)
-        {
-            if (id != process.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(process).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProcessExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Processes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Create a new process
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<Process>> PostProcess(Process process)
+        public async Task<IActionResult> CreateProcess(ProcessCreateModel model)
         {
-            _context.Processes.Add(process);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (ProcessExists(process.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            var result = await _service.CreateProcess(model);
 
-            return CreatedAtAction("GetProcess", new { id = process.Id }, process);
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
         }
 
-        // DELETE: api/Processes/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProcess(Guid id)
+        /// <summary>
+        /// Get a process by Id
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetProcessById(Guid Id)
         {
-            var process = await _context.Processes.FindAsync(id);
-            if (process == null)
+            if (Id != null)
             {
-                return NotFound();
+                var result = await _service.GetProcessById(Id);
+                return Ok(result);
             }
-
-            _context.Processes.Remove(process);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return NotFound();
         }
 
-        private bool ProcessExists(Guid id)
+        /// <summary>
+        /// Get all processes
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public async Task<IActionResult> GetProcesses([FromQuery] ProcessSearchModel searchModel)
         {
-            return _context.Processes.Any(e => e.Id == id);
+            var result = await _service.GetProcesses(searchModel);
+            if (result.Code == 200)
+                return Ok(result);
+            else if (result.Code == 404)
+                return NotFound(result);
+            return BadRequest(result);
+        }
+
+        /// <summary>
+        /// Delete process
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpDelete("{Id}/{isDeleted}")]
+        public async Task<IActionResult> Delete(Guid Id, bool isDeleted)
+        {
+            var result = await _service.DeleteProcess(Id, isDeleted);
+            if (result > 0)
+            {
+                return Ok(result);
+            }
+            return NotFound();
+        }
+
+
+        /// <summary>
+        /// Update process
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public async Task<IActionResult> Update(ProcessUpdateModel model)
+        {
+            var result = await _service.UpdateProcess(model);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return NotFound();
         }
     }
 }
