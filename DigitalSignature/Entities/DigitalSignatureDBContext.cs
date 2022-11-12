@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
+#nullable disable
+
 namespace DigitalSignature.Entities
 {
     public partial class DigitalSignatureDBContext : DbContext
@@ -13,16 +15,18 @@ namespace DigitalSignature.Entities
         {
         }
 
-        public virtual DbSet<Batch> Batches { get; set; } = null!;
-        public virtual DbSet<Document> Documents { get; set; } = null!;
-        public virtual DbSet<DocumentType> DocumentTypes { get; set; } = null!;
-        public virtual DbSet<Process> Processes { get; set; } = null!;
-        public virtual DbSet<ProcessData> ProcessDatas { get; set; } = null!;
-        public virtual DbSet<ProcessStep> ProcessSteps { get; set; } = null!;
-        public virtual DbSet<Role> Roles { get; set; } = null!;
-        public virtual DbSet<Signature> Signatures { get; set; } = null!;
-        public virtual DbSet<Template> Templates { get; set; } = null!;
-        public virtual DbSet<User> Users { get; set; } = null!;
+        public virtual DbSet<Batch> Batches { get; set; }
+        public virtual DbSet<BatchProcess> BatchProcesses { get; set; }
+        public virtual DbSet<Document> Documents { get; set; }
+        public virtual DbSet<DocumentType> DocumentTypes { get; set; }
+        public virtual DbSet<Process> Processes { get; set; }
+        public virtual DbSet<ProcessData> ProcessDatas { get; set; }
+        public virtual DbSet<ProcessStep> ProcessSteps { get; set; }
+        public virtual DbSet<Role> Roles { get; set; }
+        public virtual DbSet<RoleUser> RoleUsers { get; set; }
+        public virtual DbSet<Signature> Signatures { get; set; }
+        public virtual DbSet<Template> Templates { get; set; }
+        public virtual DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -31,24 +35,28 @@ namespace DigitalSignature.Entities
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
+
             modelBuilder.Entity<Batch>(entity =>
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
+            });
 
-                entity.HasMany(d => d.Processes)
-                    .WithMany(p => p.Batches)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "BatchProcess",
-                        l => l.HasOne<Process>().WithMany().HasForeignKey("ProcessId"),
-                        r => r.HasOne<Batch>().WithMany().HasForeignKey("BatchId"),
-                        j =>
-                        {
-                            j.HasKey("BatchId", "ProcessId");
+            modelBuilder.Entity<BatchProcess>(entity =>
+            {
+                entity.HasKey(e => new { e.BatchId, e.ProcessId });
 
-                            j.ToTable("BatchProcess");
+                entity.ToTable("BatchProcess");
 
-                            j.HasIndex(new[] { "ProcessId" }, "IX_BatchProcess_ProcessId");
-                        });
+                entity.HasIndex(e => e.ProcessId, "IX_BatchProcess_ProcessId");
+
+                entity.HasOne(d => d.Batch)
+                    .WithMany(p => p.BatchProcesses)
+                    .HasForeignKey(d => d.BatchId);
+
+                entity.HasOne(d => d.Process)
+                    .WithMany(p => p.BatchProcesses)
+                    .HasForeignKey(d => d.ProcessId);
             });
 
             modelBuilder.Entity<Document>(entity =>
@@ -134,21 +142,23 @@ namespace DigitalSignature.Entities
             modelBuilder.Entity<Role>(entity =>
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
+            });
 
-                entity.HasMany(d => d.Users)
-                    .WithMany(p => p.Roles)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "RoleUser",
-                        l => l.HasOne<User>().WithMany().HasForeignKey("UsersId"),
-                        r => r.HasOne<Role>().WithMany().HasForeignKey("RolesId"),
-                        j =>
-                        {
-                            j.HasKey("RolesId", "UsersId");
+            modelBuilder.Entity<RoleUser>(entity =>
+            {
+                entity.HasKey(e => new { e.RolesId, e.UsersId });
 
-                            j.ToTable("RoleUser");
+                entity.ToTable("RoleUser");
 
-                            j.HasIndex(new[] { "UsersId" }, "IX_RoleUser_UsersId");
-                        });
+                entity.HasIndex(e => e.UsersId, "IX_RoleUser_UsersId");
+
+                entity.HasOne(d => d.Roles)
+                    .WithMany(p => p.RoleUsers)
+                    .HasForeignKey(d => d.RolesId);
+
+                entity.HasOne(d => d.Users)
+                    .WithMany(p => p.RoleUsers)
+                    .HasForeignKey(d => d.UsersId);
             });
 
             modelBuilder.Entity<Signature>(entity =>
@@ -177,6 +187,12 @@ namespace DigitalSignature.Entities
             modelBuilder.Entity<User>(entity =>
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
+
+                entity.Property(e => e.FullName).IsRequired();
+
+                entity.Property(e => e.Password).IsRequired();
+
+                entity.Property(e => e.Username).IsRequired();
             });
 
             OnModelCreatingPartial(modelBuilder);
