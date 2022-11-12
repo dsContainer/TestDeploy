@@ -77,7 +77,7 @@ namespace DigitalSignature.Service
                 var processes = await _context.Processes.
                     Include(e => e.ProcessSteps). 
                     Include(e => e.Documents). 
-                    Include(e => e.Batches).
+                    Include(e => e.BatchProcesses).
                     Include(e => e.ProcessData).
                     Where(x => x.Id == id).
                     FirstOrDefaultAsync();
@@ -112,7 +112,7 @@ namespace DigitalSignature.Service
                 var processes = await _context.Processes.
                     Include(e => e.ProcessSteps).
                     Include(e => e.Documents).
-                    Include(e => e.Batches).
+                    Include(e => e.BatchProcesses).
                     Include(e => e.ProcessData).
                     ToListAsync();
 
@@ -131,7 +131,7 @@ namespace DigitalSignature.Service
                     processes = await _context.Processes.
                         Include(e => e.ProcessSteps).
                         Include(e => e.Documents).
-                        Include(e => e.Batches).
+                        Include(e => e.BatchProcesses).
                         Include(e => e.ProcessData).
                         Where(x => x.DateCreated.Date == CreatedDateToSearch.Date).
                         ToListAsync();
