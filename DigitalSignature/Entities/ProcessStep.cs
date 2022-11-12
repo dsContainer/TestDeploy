@@ -11,7 +11,7 @@
         public float Height { get; set; }
         public int PageSign { get; set; }
         public DateTime DateSign { get; set; }
-        public string? Message { get; set; }
+        public string Message { get; set; }
         public Guid? ProcessId { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }
@@ -19,7 +19,7 @@
         public float XpointPercent { get; set; }
         public float YpointPercent { get; set; }
 
-        public virtual Process? Process { get; set; }
-        public virtual User User { get; set; } = null!;
+        public virtual Process Process { get; set; }
+        public virtual User User { get; set; }
     }
 }
