@@ -20,7 +20,7 @@ namespace DigitalSignature.Service
             _mapper = mapper;
         }
 
-        public Task<ResultModel> CreateSignatureByUserId(Guid userId)
+        public async Task<ResultModel> CreateSignatureByUserId(Guid userId)
         {
             var result = new ResultModel();
             try
@@ -29,6 +29,16 @@ namespace DigitalSignature.Service
                 if (userToCreate != null)
                 {
                     string message = SignatureUtils.createCertificate(userToCreate.Username);
+                    var signature = new Signature
+                    {
+                        Id = Guid.NewGuid(),
+                        FromDate = DateTime.Now,
+                        ToDate = DateTime.Now.AddYears(1),
+                        IsDelete = false,
+                        UserId = userId
+                    };
+                    await _context.Signatures.AddAsync(signature);
+                    await _context.SaveChangesAsync();
                     result.IsSuccess = true;
                     result.Code = 200;
                     result.ResponseSuccess = message;
@@ -40,18 +50,16 @@ namespace DigitalSignature.Service
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
-
-
-            throw new NotImplementedException();
+            return result;
         }
 
-        public Task<ResultModel> GetListSignature()
+        public async Task<ResultModel> GetListSignature()
         {
             var result = new ResultModel();
 
             try
             {
-                var listSignature = _context.DocumentTypes.ToList();
+                var listSignature = await _context.Signatures.ToListAsync();
                 if (listSignature != null)
                 {
                     result.IsSuccess = true;
@@ -72,10 +80,10 @@ namespace DigitalSignature.Service
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
 
-            throw new NotImplementedException();
+            return result;
         }
 
-        public Task<ResultModel> SearchBySignatureId(Guid sigId)
+        public async Task<ResultModel> SearchBySignatureId(Guid sigId)
         {
 
             var result = new ResultModel();
@@ -102,35 +110,83 @@ namespace DigitalSignature.Service
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
 
-            throw new NotImplementedException();
+            return result;
         }
 
-        public Task<ResultModel> SearchContainUserNamePhoneOrEmail(string data)
+        public async Task<ResultModel> SearchContainUserNamePhoneOrEmail(string data)
         {
             var result = new ResultModel();
             try
             {
-                var SignatureIdByUserName = _context.Users.Where(x => x.Username!.Contains(data) && x.IsDeleted != false)
+                var SignatureIdByUserName = _context.Users.Where(x => x.Username.Contains(data) && x.IsDeleted == false)
                                                 .Select(x => x.SigId).ToList();
-                /*var SignatureIdByMail = _context.Users.Where(x => x.Username!.Contains(data))
-                                                .Select(x => x.SigId).ToListAsync();*/
-                var SignatureIdByPhone = _context.Users.Where(x => x.Phone!.Contains(data) && x.IsDeleted != false)
+                var SignatureIdByMail = _context.Users.Where(x => x.Email!.Contains(data) && x.IsDeleted == false)
                                                 .Select(x => x.SigId).ToList();
+                var SignatureIdByPhone = _context.Users.Where(x => x.Phone!.Contains(data) && x.IsDeleted == false)
+                                                .Select(x => x.SigId).ToList();
+
                 List<Guid> listSignatureId = new List<Guid>();
-                foreach (var item in SignatureIdByUserName)
+                foreach (var IdAdd in SignatureIdByUserName)
                 {
-                    listSignatureId.Add(item);
+                    if (listSignatureId.Count == 0)
+                    {
+                        listSignatureId.Add(IdAdd);
+                    }
+                    else
+                    {
+                        foreach (var item in listSignatureId)
+                        {
+                            if (IdAdd != item)
+                            {
+                                listSignatureId.Add(IdAdd);
+                            }
+                        }
+                    }
                 }
-
-                foreach (var item in SignatureIdByPhone)
+                foreach (var IdAdd in SignatureIdByMail)
                 {
-                    listSignatureId.Add(item);
+                    if (listSignatureId.Count == 0)
+                    {
+                        listSignatureId.Add(IdAdd);
+                    }
+                    else
+                    {
+                        foreach (var item in listSignatureId)
+                        {
+                            if (IdAdd != item)
+                            {
+                                listSignatureId.Add(IdAdd);
+                            }
+                        }
+                    }
                 }
-
+                foreach (var IdAdd in SignatureIdByPhone)
+                {
+                    if (listSignatureId.Count == 0)
+                    {
+                        listSignatureId.Add(IdAdd);
+                    }
+                    else
+                    {
+                        foreach (var item in listSignatureId)
+                        {
+                            if (IdAdd != item)
+                            {
+                                listSignatureId.Add(IdAdd);
+                            }
+                        }
+                    }
+                }
+                List<Signature> listSignature = new List<Signature>();
+                foreach (var item in listSignatureId)
+                {
+                    var signature = _context.Signatures.FirstOrDefault(x => x.Id == item);
+                    listSignature.Add(signature);
+                }
 
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.ResponseSuccess = listSignatureId;
+                result.ResponseSuccess = listSignature;
 
             }
             catch (Exception e)
@@ -140,17 +196,28 @@ namespace DigitalSignature.Service
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
 
-            throw new NotImplementedException();
+            return result;
         }
 
-        public Task<ResultModel> SearchRangeDate(DateTime fromDate, DateTime toDate)
+        public async Task<ResultModel> SearchRangeDate(string fromDate, string toDate)
         {
 
             var result = new ResultModel();
             try
             {
-                var listSignature = _context.Signatures.Where(x => x.FromDate >= fromDate)
-                                                        .Where(x => x.ToDate <= toDate).ToListAsync();
+                DateTime fromDateToSearch = DateTime.ParseExact(fromDate, "dd/MM/yyyy", null);
+                DateTime toDateToSearch = DateTime.ParseExact(toDate, "dd/MM/yyyy", null);
+                int dateCompare = fromDateToSearch.CompareTo(toDateToSearch); // >=0 => true
+                if (dateCompare >= 0)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.ResponseSuccess = "Date not valid";
+                    return result;
+                }
+
+                var listSignature = await _context.Signatures.Where(x => x.ToDate >= fromDateToSearch && x.ToDate <= toDateToSearch)
+                                                        .ToListAsync();
                 if (listSignature != null)
                 {
                     result.IsSuccess = true;
@@ -170,7 +237,7 @@ namespace DigitalSignature.Service
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
-            throw new NotImplementedException();
+            return result;
         }
     }
 }

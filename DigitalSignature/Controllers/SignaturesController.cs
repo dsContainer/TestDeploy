@@ -2,6 +2,7 @@
 using DigitalSignature.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using DigitalSignature.Model.Requests;
 
 namespace DigitalSignature.Controllers
 {
@@ -85,7 +86,7 @@ namespace DigitalSignature.Controllers
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
         [HttpGet("SearchRangeDate")]
-        public async Task<IActionResult> SearchRangeDate(DateTime fromDate, DateTime toDate)
+        public async Task<IActionResult> SearchRangeDate(string fromDate, string toDate)
         {
             var result = await _service.SearchRangeDate(fromDate, toDate);
 

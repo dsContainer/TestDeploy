@@ -8,6 +8,6 @@ namespace DigitalSignature.Interface
         Task<ResultModel> CreateSignatureByUserId(Guid userId);
         Task<ResultModel> SearchContainUserNamePhoneOrEmail(string data);
         Task<ResultModel> SearchBySignatureId(Guid sigId);
-        Task<ResultModel> SearchRangeDate(DateTime fromDate, DateTime toDate);
+        Task<ResultModel> SearchRangeDate(string fromDate, string toDate);
     }
 }
