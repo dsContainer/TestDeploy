@@ -5,7 +5,7 @@ namespace DigitalSignature.Interface
 {
     public interface IJwtTokenService
     {
-        Task<string> GenerateTokenAsync(User account);
+        string GenerateTokenUser(User account);
         Task<string> GenerateTokenDMSAsync(User account);
         string GenerateToken(params Claim[] claims);
     }

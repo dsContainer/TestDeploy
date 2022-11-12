@@ -42,16 +42,18 @@ namespace DigitalSignature.Service
             return tokenHandler.WriteToken(token);
         }
 
-        public Task<string> GenerateTokenAsync(User account)
+        public string GenerateTokenUser(User account)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["JWT:Secret"]));
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));  //Mã hóa Key trong appsetting.json
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);   //Giải thuật encode: HMAC SHA-256
 
             var claims = new List<Claim>
             {
                 new Claim("UserName" , account.Username),
                 new Claim("Email", account.Email ?? ""),
                 new Claim("FullName", account.FullName),
-                new Claim("UserId", account.Id.ToString())
+                new Claim("UserId", account.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())  //JWT ID
             };
 
             /*foreach (var role in account.Roles)
@@ -59,17 +61,13 @@ namespace DigitalSignature.Service
                 claims.Add(new Claim(ClaimTypes.Role, role.Name));
             }*/
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.UtcNow.AddHours(1),
-                Issuer = _configuration["JWT:Issuer"],
-                SigningCredentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature)
-            };
+            var token = new JwtSecurityToken(_configuration["Jwt:Issuer"],
+                _configuration["Jwt:Issuer"],
+                claims,
+                expires: DateTime.Now.AddDays(2),
+                signingCredentials: credentials);
 
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return Task.FromResult(tokenHandler.WriteToken(token));
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
         public Task<string> GenerateTokenDMSAsync(User account)

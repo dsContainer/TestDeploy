@@ -1,11 +1,13 @@
 ﻿using DigitalSignature.Interface;
 using DigitalSignature.Model;
 using DigitalSignature.Model.Requests;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DigitalSignature.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize]
     [ApiController]
     public class UserController : ControllerBase
     {
