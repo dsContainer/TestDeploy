@@ -1,20 +1,36 @@
+using AutoMapper;
 using DigitalSignature.Entities;
+using DigitalSignature.Interface;
+using DigitalSignature.Mapper;
+using DigitalSignature.Service;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddCors();
 
 builder.Services.AddMvc();
+
+//Database
 builder.Services.AddDbContext<DigitalSignatureDBContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("SignDatabase")));
+
+//Mapper
+builder.Services.AddSingleton(new MapperConfiguration(mc =>
+    {
+        mc.AddProfile(new MappingProfile());
+    }).CreateMapper());
+
+//Service
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IDocumentTypeService, DocumentTypeService>();
+builder.Services.AddScoped<ISignatureService, SignatureService>();
+
 
 var app = builder.Build();
 

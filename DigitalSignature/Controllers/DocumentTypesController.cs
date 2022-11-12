@@ -1,6 +1,6 @@
-﻿using DigitalSignature.Entities;
+﻿using DigitalSignature.Interface;
+using DigitalSignature.Model.DocumentModel;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace DigitalSignature.Controllers
 {
@@ -8,109 +8,89 @@ namespace DigitalSignature.Controllers
     [ApiController]
     public class DocumentTypesController : ControllerBase
     {
-        private readonly DigitalSignatureDBContext _context;
+        private readonly IDocumentTypeService _service;
 
-        public DocumentTypesController(DigitalSignatureDBContext context)
+        public DocumentTypesController(IDocumentTypeService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/DocumentTypes
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<DocumentType>>> GetDocumentTypes()
-        {
-            return await _context.DocumentTypes.ToListAsync();
-        }
-
-        // GET: api/DocumentTypes/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<DocumentType>> GetDocumentType(Guid id)
-        {
-            var documentType = await _context.DocumentTypes.FindAsync(id);
-
-            if (documentType == null)
-            {
-                return NotFound();
-            }
-
-            return documentType;
-        }
-
-        // PUT: api/DocumentTypes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutDocumentType(Guid id, DocumentType documentType)
-        {
-            if (id != documentType.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(documentType).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!DocumentTypeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/DocumentTypes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Create a new Document Type
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<DocumentType>> PostDocumentType(DocumentType documentType)
+        public async Task<IActionResult> CreateDoccument(DocumentTypeCreateModel model)
         {
-            _context.DocumentTypes.Add(documentType);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (DocumentTypeExists(documentType.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            var result = await _service.CreateDocumentType(model);
 
-            return CreatedAtAction("GetDocumentType", new { id = documentType.Id }, documentType);
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
         }
 
-        // DELETE: api/DocumentTypes/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteDocumentType(Guid id)
+        /// <summary>
+        /// get a Document Type by Id
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetDocumentTypeById(Guid Id)
         {
-            var documentType = await _context.DocumentTypes.FindAsync(id);
-            if (documentType == null)
+            if (Id != null)
             {
-                return NotFound();
+                var result = await _service.GetDocumentTypeById(Id);
+                return Ok(result);
             }
-
-            _context.DocumentTypes.Remove(documentType);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            return NotFound();
         }
 
-        private bool DocumentTypeExists(Guid id)
+        /// <summary>
+        /// get all Document Type
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("getAll")]
+        public async Task<IActionResult> GetDocumentTypes()
         {
-            return _context.DocumentTypes.Any(e => e.Id == id);
+            var result = await _service.GetDocumentTypes();
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return NotFound();
+        }
+
+        /// <summary>
+        /// delete DocType
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpDelete("{Id}")]
+        public async Task<IActionResult> Delete(Guid Id)
+        {
+            var result = await _service.DeleteDocumentType(Id);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return NotFound();
+        }
+
+
+        /// <summary>
+        /// update DocType
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpPut("{Id}")]
+        public async Task<IActionResult> Update(DocumentTypeUpdateModel model, Guid Id)
+        {
+            var result = await _service.UpdateDocumentType(model, Id);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            return NotFound();
         }
     }
 }

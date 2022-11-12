@@ -1,116 +1,94 @@
-﻿using DigitalSignature.Entities;
+﻿using DigitalSignature.Interface;
+using DigitalSignature.Model;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace DigitalSignature.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SignaturesController : ControllerBase
+    public class SignatureController : ControllerBase
     {
-        private readonly DigitalSignatureDBContext _context;
+        private readonly ISignatureService _service;
 
-        public SignaturesController(DigitalSignatureDBContext context)
+        public SignatureController(ISignatureService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/Signatures
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Signature>>> GetSignatures()
+
+        /// <summary>
+        /// Get list HSM from user
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
+        [HttpGet("GetListSignature")]
+        public async Task<IActionResult> GetListSignature()
         {
-            return await _context.Signatures.ToListAsync();
+            var result = await _service.GetListSignature();
+
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
         }
 
-        // GET: api/Signatures/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Signature>> GetSignature(Guid id)
+        /// <summary>
+        /// Gen Certificate
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
+        [HttpPost("GenCer")]
+        public async Task<IActionResult> CreateSignatureByUserId(Guid userId)
         {
-            var signature = await _context.Signatures.FindAsync(id);
+            var result = await _service.CreateSignatureByUserId(userId);
 
-            if (signature == null)
-            {
-                return NotFound();
-            }
-
-            return signature;
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
         }
 
-        // PUT: api/Signatures/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutSignature(Guid id, Signature signature)
+        /// <summary>
+        /// Search signature contain username or email or phone
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
+        [HttpGet("SearchContainData")]
+        public async Task<IActionResult> SearchContainUserNamePhoneOrEmail(string data)
         {
-            if (id != signature.Id)
-            {
-                return BadRequest();
-            }
+            var result = await _service.SearchContainUserNamePhoneOrEmail(data);
 
-            _context.Entry(signature).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SignatureExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
         }
 
-        // POST: api/Signatures
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Signature>> PostSignature(Signature signature)
+        /// <summary>
+        /// Search signature by sigId
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
+        [HttpGet("SearchByid")]
+        public async Task<IActionResult> SearchBySignatureId(Guid sigId)
         {
-            _context.Signatures.Add(signature);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (SignatureExists(signature.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            var result = await _service.SearchBySignatureId(sigId);
 
-            return CreatedAtAction("GetSignature", new { id = signature.Id }, signature);
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
         }
 
-        // DELETE: api/Signatures/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSignature(Guid id)
+        /// <summary>
+        /// Filter signature in range date is active
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
+        [HttpGet("SearchRangeDate")]
+        public async Task<IActionResult> SearchRangeDate(DateTime fromDate, DateTime toDate)
         {
-            var signature = await _context.Signatures.FindAsync(id);
-            if (signature == null)
-            {
-                return NotFound();
-            }
+            var result = await _service.SearchRangeDate(fromDate, toDate);
 
-            _context.Signatures.Remove(signature);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool SignatureExists(Guid id)
-        {
-            return _context.Signatures.Any(e => e.Id == id);
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
         }
     }
 }
