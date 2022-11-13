@@ -1,6 +1,5 @@
 ﻿using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model;
-using Digital.Infrastructure.Model.SignatureModel;
 using Digital.Infrastructure.Model.TemplateModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +14,7 @@ namespace DigitalSignature.Controllers
         private readonly ITemplateService _service;
         public TemplateController(ITemplateService service)
         {
-            _service = service ;
+            _service = service;
         }
 
 
