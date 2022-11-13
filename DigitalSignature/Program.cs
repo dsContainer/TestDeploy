@@ -41,6 +41,9 @@ builder.Services.AddScoped<IDocumentTypeService, DocumentTypeService>();
 builder.Services.AddScoped<ISignatureService, SignatureService>();
 builder.Services.AddScoped<IProcessService, ProcessService>();
 builder.Services.AddScoped<IProcessStepService, ProcessStepService>();
+builder.Services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
+
+builder.Services.AddScoped<ITemplateService, TemplateService>();
 
 //Swagger
 builder.Services.AddSwaggerGen(c =>
