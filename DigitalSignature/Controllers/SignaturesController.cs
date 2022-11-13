@@ -1,8 +1,8 @@
-﻿using DigitalSignature.Interface;
-using DigitalSignature.Model;
+﻿using Digital.Infrastructure.Interface;
+using Digital.Infrastructure.Model;
+using Digital.Infrastructure.Model.SignatureModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using DigitalSignature.Model.Requests;
 
 namespace DigitalSignature.Controllers
 {
@@ -89,6 +89,21 @@ namespace DigitalSignature.Controllers
         public async Task<IActionResult> SearchRangeDate(string fromDate, string toDate)
         {
             var result = await _service.SearchRangeDate(fromDate, toDate);
+
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
+        }
+
+        /// <summary>
+        /// Sign Pdf
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
+        [HttpPost("SignPdf")]
+        public async Task<IActionResult> SignPDF(SignModel signModel)
+        {
+            var result = await _service.SignPDF(signModel);
 
             if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
             return BadRequest(result);

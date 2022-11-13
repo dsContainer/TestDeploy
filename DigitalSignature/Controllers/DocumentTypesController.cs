@@ -1,5 +1,5 @@
-﻿using DigitalSignature.Interface;
-using DigitalSignature.Model.DocumentModel;
+﻿using Digital.Infrastructure.Interface;
+using Digital.Infrastructure.Model.DocumentModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

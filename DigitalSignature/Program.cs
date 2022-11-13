@@ -1,8 +1,8 @@
 using AutoMapper;
-using DigitalSignature.Entities;
-using DigitalSignature.Interface;
-using DigitalSignature.Mapper;
-using DigitalSignature.Service;
+using Digital.Data.Entities;
+using Digital.Infrastructure.Interface;
+using Digital.Infrastructure.Mapper;
+using Digital.Infrastructure.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -12,8 +12,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers().AddNewtonsoftJson(options =>
-    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -38,8 +37,6 @@ builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDocumentTypeService, DocumentTypeService>();
 builder.Services.AddScoped<ISignatureService, SignatureService>();
-builder.Services.AddScoped<IProcessService, ProcessService>();
-builder.Services.AddScoped<IProcessStepService, ProcessStepService>();
 
 //Swagger
 builder.Services.AddSwaggerGen(c =>
