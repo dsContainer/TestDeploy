@@ -1,10 +1,9 @@
-﻿using DigitalSignature.Entities;
+﻿using Digital.Data.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace DigitalSignature.
-    s
+namespace DigitalSignature.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]

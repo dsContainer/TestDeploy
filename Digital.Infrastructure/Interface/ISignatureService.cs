@@ -1,4 +1,5 @@
 ﻿using Digital.Infrastructure.Model;
+using Digital.Infrastructure.Model.SignatureModel;
 
 namespace Digital.Infrastructure.Interface
 {
@@ -9,5 +10,6 @@ namespace Digital.Infrastructure.Interface
         Task<ResultModel> SearchContainUserNamePhoneOrEmail(string data);
         Task<ResultModel> SearchBySignatureId(Guid sigId);
         Task<ResultModel> SearchRangeDate(string fromDate, string toDate);
+        Task<ResultModel> SignPDF(SignModel signModel);
     }
 }

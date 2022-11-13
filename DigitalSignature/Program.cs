@@ -1,8 +1,8 @@
 using AutoMapper;
-using DigitalSignature.Entities;
-using DigitalSignature.Interface;
-using DigitalSignature.Mapper;
-using DigitalSignature.Service;
+using Digital.Data.Entities;
+using Digital.Infrastructure.Interface;
+using Digital.Infrastructure.Mapper;
+using Digital.Infrastructure.Service;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;

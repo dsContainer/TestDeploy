@@ -46,5 +46,18 @@ namespace Digital.Infrastructure.Utilities
                 return ("Error while generating certificates. ");
             }
         }
+
+        public static string convertBase64FromFile(string filePath)
+        {
+            Byte[] bytes = File.ReadAllBytes(filePath);
+            String file = Convert.ToBase64String(bytes);
+            return file;
+        }
+        public static string convertBase64FromImg(string filePath)
+        {
+            byte[] imageArray = System.IO.File.ReadAllBytes(filePath);
+            string base64ImageRepresentation = Convert.ToBase64String(imageArray);
+            return base64ImageRepresentation;
+        }
     }
 }

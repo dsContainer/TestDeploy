@@ -1,9 +1,9 @@
-﻿using DigitalSignature.Interface;
-using DigitalSignature.Model;
+﻿using Digital.Infrastructure.Interface;
+using Digital.Infrastructure.Model;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using DigitalSignature.Model.Requests;
-using DigitalSignature.Model.SignatureModel;
+using Digital.Infrastructure.Model.Requests;
+using Digital.Infrastructure.Model.SignatureModel;
 
 namespace DigitalSignature.Controllers
 {
