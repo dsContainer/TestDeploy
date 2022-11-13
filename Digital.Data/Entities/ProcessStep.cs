@@ -11,7 +11,7 @@
         public float Height { get; set; }
         public int PageSign { get; set; }
         public DateTime DateSign { get; set; }
-        public string Message { get; set; }
+        public string? Message { get; set; }
         public Guid? ProcessId { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }

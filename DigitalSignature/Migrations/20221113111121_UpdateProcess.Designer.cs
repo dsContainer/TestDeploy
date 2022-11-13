@@ -4,6 +4,7 @@ using Digital.Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalSignature.Migrations
 {
     [DbContext(typeof(DigitalSignatureDBContext))]
-    partial class DigitalSignatureDBContextModelSnapshot : ModelSnapshot
+    [Migration("20221113111121_UpdateProcess")]
+    partial class UpdateProcess
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,7 +49,7 @@ namespace DigitalSignature.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Batches", (string)null);
+                    b.ToTable("Batches");
                 });
 
             modelBuilder.Entity("Digital.Data.Entities.BatchProcess", b =>
@@ -109,7 +111,7 @@ namespace DigitalSignature.Migrations
 
                     b.HasIndex(new[] { "ProcessId" }, "IX_Documents_ProcessId");
 
-                    b.ToTable("Documents", (string)null);
+                    b.ToTable("Documents");
                 });
 
             modelBuilder.Entity("Digital.Data.Entities.DocumentType", b =>
@@ -139,7 +141,7 @@ namespace DigitalSignature.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DocumentTypes", (string)null);
+                    b.ToTable("DocumentTypes");
                 });
 
             modelBuilder.Entity("Digital.Data.Entities.Process", b =>
@@ -177,7 +179,7 @@ namespace DigitalSignature.Migrations
                         .IsUnique()
                         .HasFilter("([TemplateId] IS NOT NULL)");
 
-                    b.ToTable("Processes", (string)null);
+                    b.ToTable("Processes");
                 });
 
             modelBuilder.Entity("Digital.Data.Entities.ProcessData", b =>
@@ -214,7 +216,7 @@ namespace DigitalSignature.Migrations
 
                     b.HasIndex(new[] { "ProcessId" }, "IX_ProcessDatas_ProcessId");
 
-                    b.ToTable("ProcessDatas", (string)null);
+                    b.ToTable("ProcessDatas");
                 });
 
             modelBuilder.Entity("Digital.Data.Entities.ProcessStep", b =>
@@ -279,7 +281,7 @@ namespace DigitalSignature.Migrations
                     b.HasIndex(new[] { "UserId" }, "IX_ProcessSteps_UserId")
                         .IsUnique();
 
-                    b.ToTable("ProcessSteps", (string)null);
+                    b.ToTable("ProcessSteps");
                 });
 
             modelBuilder.Entity("Digital.Data.Entities.Role", b =>
@@ -301,7 +303,7 @@ namespace DigitalSignature.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles", (string)null);
+                    b.ToTable("Roles");
                 });
 
             modelBuilder.Entity("Digital.Data.Entities.RoleUser", b =>
@@ -341,7 +343,7 @@ namespace DigitalSignature.Migrations
                     b.HasIndex(new[] { "UserId" }, "IX_Signatures_UserId")
                         .IsUnique();
 
-                    b.ToTable("Signatures", (string)null);
+                    b.ToTable("Signatures");
                 });
 
             modelBuilder.Entity("Digital.Data.Entities.Template", b =>
@@ -380,7 +382,7 @@ namespace DigitalSignature.Migrations
 
                     b.HasIndex(new[] { "DocumentTypeId" }, "IX_Templates_DocumentTypeId");
 
-                    b.ToTable("Templates", (string)null);
+                    b.ToTable("Templates");
                 });
 
             modelBuilder.Entity("Digital.Data.Entities.User", b =>
@@ -425,7 +427,7 @@ namespace DigitalSignature.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Digital.Data.Entities.BatchProcess", b =>
