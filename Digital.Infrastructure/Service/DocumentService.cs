@@ -1,61 +1,60 @@
 ﻿using AutoMapper;
-using Digital.Data.Data;
+using Azure.Storage.Blobs;
 using Digital.Data.Entities;
 using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model;
 using Digital.Infrastructure.Model.DocumentModel;
-using Digital.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
-using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Digital.Infrastructure.Service
 {
     public class DocumentService : IDocumentService
     {
 
-        private readonly ApplicationDBContext _context;
+        private readonly DigitalSignatureDBContext _context;
         private readonly IMapper _mapper;
         private readonly IUserContextService _userContext;
-        private readonly IHttpContextAccessor _contextAccessor;
-        private readonly IConfiguration _configuration;
+        
+        private readonly string _storageConnectionString;
+        private readonly string _storageContainerName;
+
         public DocumentService(
-            IHttpContextAccessor contextAccessor,
-            IMapper mapper, ApplicationDBContext context,
+            IMapper mapper, DigitalSignatureDBContext context,
             IUserContextService userContextService,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            ILogger<AzureBlobStorageService> logger)
         {
             _context = context;
             _mapper = mapper;
             _userContext = userContextService;
-            _contextAccessor = contextAccessor;
-            _configuration = configuration;
+            _storageConnectionString = configuration["BlobConnectionString"];
+            _storageContainerName = configuration["BlobContainerName"];
         }
-        CloudStorageAccount cloudStorageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=dsdbstorage123;AccountKey=VM9snh83p6zT+AtAkDsFC+ivnqlJI1XAwyAQVzfFR4kX35kR3iESzXt1osAXxgSGEw49pzoM/6un+AStg2JSYQ==;EndpointSuffix=core.windows.net");
-        
         
         public async Task<ResultModel> CreateAsync(DocumentUploadApiRequest model)
         {
             var result = new ResultModel();
+            DocumentResponse response = new();
+            BlobContainerClient container = new BlobContainerClient(_storageConnectionString, _storageContainerName);
+            await container.CreateAsync();
             var transaction = _context.Database.BeginTransaction();
             try
             {
-                var fileStream = model.File!.OpenReadStream();
-                //var respone = await _docManagementService.UploadAsync(model, fileStream);
-
-                //if (respone == null)
-                //{
-                //    result.Code = 400;
-                //    result.IsSuccess = false;
-                //    result.ResponseFailed = "Create Doccument Failed!";
-                //    return result;
-                //}
+                BlobClient client = container.GetBlobClient(model.File.FileName);
+                await using (Stream? data = model.File.OpenReadStream())
+                {
+                    // Upload the file async
+                    await client.UploadAsync(data);
+                }
+                if (model == null)
+                {
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.ResponseFailed = "Create Doccument Failed!";
+                    return result;
+                }
                 if (model.StartDate > model.EndDate)
                 {
                     result.Code = 400;
@@ -68,21 +67,16 @@ namespace Digital.Infrastructure.Service
                 //add Entity
                 var document = new Document
                 {
-                    //Id = respone!.ID,
-                    //Description = respone!.Description,
-                    //FileName = respone.Name,
+                    Description = model!.Description,
+                    FileName = model.FileName,
                     FileExtension = model.File!.FileName.Split(".").Last(),
                     DocumentTypeId = model.DocumentTypeId,
+                    ProcessId = model.ProcessId,
                     OwnerId = Guid.Parse(_userContext.UserID.ToString()!),
                     Owner = _context.Users.FirstOrDefault(x => !x.IsDeleted && x.Id == Guid.Parse(ownId))
                 };
 
                 await _context.Documents.AddAsync(document);
-                /*await _context.SaveChangesAsync();*/
-
-               
-
-                await _context.SaveChangesAsync();
 
                 result.Code = 200;
                 result.IsSuccess = true;
@@ -93,6 +87,7 @@ namespace Digital.Infrastructure.Service
                 await transaction.RollbackAsync();
                 result.IsSuccess = false;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+
             }
 
             await transaction.CommitAsync();
