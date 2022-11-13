@@ -39,7 +39,7 @@ namespace Digital.Infrastructure.Service
             var result = new ResultModel();
             DocumentResponse response = new();
             BlobContainerClient container = new BlobContainerClient(_storageConnectionString, _storageContainerName);
-            await container.CreateAsync();
+            await container.CreateIfNotExistsAsync();
             var transaction = _context.Database.BeginTransaction();
             try
             {

@@ -28,10 +28,8 @@ namespace DigitalSignature.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateDoccument([FromForm] DocumentUploadApiRequest model)
         {
-            DocumentUploadApiRequest? result = await _service.CreateAsync(model);
-            //var result = await _service.CreateAsync(model);
-
-            //if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            var result = await _service.CreateAsync(model);
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
             return BadRequest(result);
         }
     }
