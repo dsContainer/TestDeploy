@@ -8,12 +8,6 @@ using Digital.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Blob;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Digital.Infrastructure.Service
 {
@@ -38,8 +32,8 @@ namespace Digital.Infrastructure.Service
             _configuration = configuration;
         }
         CloudStorageAccount cloudStorageAccount = CloudStorageAccount.Parse("DefaultEndpointsProtocol=https;AccountName=dsdbstorage123;AccountKey=VM9snh83p6zT+AtAkDsFC+ivnqlJI1XAwyAQVzfFR4kX35kR3iESzXt1osAXxgSGEw49pzoM/6un+AStg2JSYQ==;EndpointSuffix=core.windows.net");
-        
-        
+
+
         public async Task<ResultModel> CreateAsync(DocumentUploadApiRequest model)
         {
             var result = new ResultModel();
@@ -80,7 +74,7 @@ namespace Digital.Infrastructure.Service
                 await _context.Documents.AddAsync(document);
                 /*await _context.SaveChangesAsync();*/
 
-               
+
 
                 await _context.SaveChangesAsync();
 

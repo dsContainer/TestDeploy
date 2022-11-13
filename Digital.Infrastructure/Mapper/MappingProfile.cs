@@ -16,6 +16,7 @@ namespace Digital.Infrastructure.Mapper
 
             #region User
             CreateMap<UserRequest, User>();
+            CreateMap<UserCreateRequest, User>();
             #endregion
         }
     }

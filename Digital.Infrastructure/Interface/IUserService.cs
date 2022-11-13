@@ -7,7 +7,7 @@ namespace Digital.Infrastructure.Interface
     {
         List<User> GetUsers();
         User GetUser(Guid id);
-        User CreateUser(UserRequest userRequest);
+        User CreateUser(UserCreateRequest userRequest);
         User UpdateUser(Guid id, UserRequest userRequest);
         User DeletedUser(Guid id, bool isDeleted);
     }
