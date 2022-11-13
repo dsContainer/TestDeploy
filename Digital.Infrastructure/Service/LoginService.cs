@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Digital.Data.Entities;
+using Digital.Infrastructure.Common;
 using Digital.Infrastructure.Interface;
+using Microsoft.EntityFrameworkCore;
 
 namespace Digital.Infrastructure.Service
 {
@@ -16,7 +18,15 @@ namespace Digital.Infrastructure.Service
 
         public User AuthenticateUser(string userName, string password)
         {
-            var user = _context.Users.Where(e => e.Username.Equals(userName) && e.Password.Equals(password) && e.IsDeleted == false).FirstOrDefault();
+            var user = _context.Users
+                           .Include(e => e.RoleUsers).ThenInclude(e => e.Roles)
+                           .Include(e => e.Signature).Include(e => e.ProcessStep)
+                           .FirstOrDefault(e => e.Username.Equals(userName) && e.IsDeleted == false);
+
+            if (user != null)
+            {
+                if (!Encryption.GenerateMD5(password).Equals(user.Password)) user = null;
+            }
 
             return user;
         }

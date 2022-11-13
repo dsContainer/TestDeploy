@@ -51,7 +51,7 @@ namespace DigitalSignature.Controllers
         }
 
         [HttpPost()]
-        public async Task<ActionResult> PostUser([FromBody] UserRequest userRequest)
+        public async Task<ActionResult> PostUser([FromBody] UserCreateRequest userRequest)
         {
             try
             {

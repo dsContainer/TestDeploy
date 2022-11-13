@@ -13,7 +13,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -24,7 +25,8 @@ builder.Services.AddMvc();
 
 //Database
 builder.Services.AddDbContext<DigitalSignatureDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SignDatabase")));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SignDatabase"), 
+    b => b.MigrationsAssembly("DigitalSignature")));
 
 //Mapper
 builder.Services.AddSingleton(new MapperConfiguration(mc =>
@@ -38,6 +40,8 @@ builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDocumentTypeService, DocumentTypeService>();
 builder.Services.AddScoped<ISignatureService, SignatureService>();
+builder.Services.AddScoped<IProcessService, ProcessService>();
+builder.Services.AddScoped<IProcessStepService, ProcessStepService>();
 builder.Services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IUserContextService, UserContextService>();

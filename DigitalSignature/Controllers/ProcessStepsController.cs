@@ -1,4 +1,6 @@
 ﻿using Digital.Data.Entities;
+using Digital.Infrastructure.Interface;
+using Digital.Infrastructure.Model.ProcessModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,109 +12,62 @@ namespace DigitalSignature.Controllers
     [ApiController]
     public class ProcessStepsController : ControllerBase
     {
-        private readonly DigitalSignatureDBContext _context;
 
-        public ProcessStepsController(DigitalSignatureDBContext context)
+        private readonly IProcessStepService _service;
+
+        public ProcessStepsController(IProcessStepService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        // GET: api/ProcessSteps
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProcessStep>>> GetProcessSteps()
+        /// <summary>
+        /// get a process step by Id
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetProcessStepById(Guid Id)
         {
-            return await _context.ProcessSteps.ToListAsync();
+            if (Id != null)
+            {
+                var result = await _service.GetProcessStepById(Id);
+                return Ok(result);
+            }
+            return NotFound();
         }
 
-        // GET: api/ProcessSteps/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<ProcessStep>> GetProcessStep(Guid id)
+        /// <summary>
+        /// delete process step
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpDelete("{Id}/{isDeleted}")]
+        public async Task<IActionResult> Delete(Guid Id, bool isDeleted)
         {
-            var processStep = await _context.ProcessSteps.FindAsync(id);
-
-            if (processStep == null)
+            var result = await _service.DeleteProcessStep(Id, isDeleted);
+            if (result > 0)
             {
-                return NotFound();
+                return Ok(result);
             }
-
-            return processStep;
+            return NotFound();
         }
 
-        // PUT: api/ProcessSteps/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutProcessStep(Guid id, ProcessStep processStep)
+
+        /// <summary>
+        /// update process step
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public async Task<IActionResult> Update(ProcessStepUpdateModel model)
         {
-            if (id != processStep.Id)
+            var result = await _service.UpdateProcessStep(model);
+            if (result != null)
             {
-                return BadRequest();
+                return Ok(result);
             }
-
-            _context.Entry(processStep).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProcessStepExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/ProcessSteps
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<ProcessStep>> PostProcessStep(ProcessStep processStep)
-        {
-            _context.ProcessSteps.Add(processStep);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (ProcessStepExists(processStep.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return CreatedAtAction("GetProcessStep", new { id = processStep.Id }, processStep);
-        }
-
-        // DELETE: api/ProcessSteps/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProcessStep(Guid id)
-        {
-            var processStep = await _context.ProcessSteps.FindAsync(id);
-            if (processStep == null)
-            {
-                return NotFound();
-            }
-
-            _context.ProcessSteps.Remove(processStep);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
-        private bool ProcessStepExists(Guid id)
-        {
-            return _context.ProcessSteps.Any(e => e.Id == id);
+            return NotFound();
         }
     }
+    
 }

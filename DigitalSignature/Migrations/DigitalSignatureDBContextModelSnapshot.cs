@@ -47,7 +47,7 @@ namespace DigitalSignature.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Batches");
+                    b.ToTable("Batches", (string)null);
                 });
 
             modelBuilder.Entity("DigitalSignature.Entities.BatchProcess", b =>
@@ -109,7 +109,7 @@ namespace DigitalSignature.Migrations
 
                     b.HasIndex(new[] { "ProcessId" }, "IX_Documents_ProcessId");
 
-                    b.ToTable("Documents");
+                    b.ToTable("Documents", (string)null);
                 });
 
             modelBuilder.Entity("DigitalSignature.Entities.DocumentType", b =>
@@ -139,7 +139,7 @@ namespace DigitalSignature.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DocumentTypes");
+                    b.ToTable("DocumentTypes", (string)null);
                 });
 
             modelBuilder.Entity("DigitalSignature.Entities.Process", b =>
@@ -178,7 +178,7 @@ namespace DigitalSignature.Migrations
                         .IsUnique()
                         .HasFilter("([TemplateId] IS NOT NULL)");
 
-                    b.ToTable("Processes");
+                    b.ToTable("Processes", (string)null);
                 });
 
             modelBuilder.Entity("DigitalSignature.Entities.ProcessData", b =>
@@ -215,7 +215,7 @@ namespace DigitalSignature.Migrations
 
                     b.HasIndex(new[] { "ProcessId" }, "IX_ProcessDatas_ProcessId");
 
-                    b.ToTable("ProcessDatas");
+                    b.ToTable("ProcessDatas", (string)null);
                 });
 
             modelBuilder.Entity("DigitalSignature.Entities.ProcessStep", b =>
@@ -281,7 +281,7 @@ namespace DigitalSignature.Migrations
                     b.HasIndex(new[] { "UserId" }, "IX_ProcessSteps_UserId")
                         .IsUnique();
 
-                    b.ToTable("ProcessSteps");
+                    b.ToTable("ProcessSteps", (string)null);
                 });
 
             modelBuilder.Entity("DigitalSignature.Entities.Role", b =>
@@ -303,7 +303,7 @@ namespace DigitalSignature.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("DigitalSignature.Entities.RoleUser", b =>
@@ -343,7 +343,7 @@ namespace DigitalSignature.Migrations
                     b.HasIndex(new[] { "UserId" }, "IX_Signatures_UserId")
                         .IsUnique();
 
-                    b.ToTable("Signatures");
+                    b.ToTable("Signatures", (string)null);
                 });
 
             modelBuilder.Entity("DigitalSignature.Entities.Template", b =>
@@ -382,7 +382,7 @@ namespace DigitalSignature.Migrations
 
                     b.HasIndex(new[] { "DocumentTypeId" }, "IX_Templates_DocumentTypeId");
 
-                    b.ToTable("Templates");
+                    b.ToTable("Templates", (string)null);
                 });
 
             modelBuilder.Entity("DigitalSignature.Entities.User", b =>
@@ -427,7 +427,7 @@ namespace DigitalSignature.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("DigitalSignature.Entities.BatchProcess", b =>

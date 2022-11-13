@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Digital.Data.Entities;
+using Digital.Infrastructure.Common;
 using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model.Requests;
 using Microsoft.EntityFrameworkCore;
@@ -18,8 +19,8 @@ namespace Digital.Infrastructure.Service
 
         public List<User> GetUsers()
         {
-            var users = _context.Users.Include(e=>e.RoleUsers).ThenInclude(e=>e.Roles)
-                           .Include(e=>e.Signature).Include(e=>e.ProcessStep).AsNoTracking().ToList();
+            var users = _context.Users.Include(e => e.RoleUsers).ThenInclude(e => e.Roles)
+                           .Include(e => e.Signature).Include(e => e.ProcessStep).AsNoTracking().ToList();
 
             return users;
         }
@@ -27,16 +28,19 @@ namespace Digital.Infrastructure.Service
         public User GetUser(Guid id)
         {
             var user = _context.Users.Include(e => e.RoleUsers).ThenInclude(e => e.Roles)
-                           .Include(e => e.Signature).Include(e => e.ProcessStep).AsNoTracking().FirstOrDefault(e=>e.Id==id);
+                           .Include(e => e.Signature).Include(e => e.ProcessStep).AsNoTracking().FirstOrDefault(e => e.Id == id);
             return user;
         }
 
-        public User CreateUser(UserRequest userRequest)
+        public User CreateUser(UserCreateRequest userRequest)
         {
+            if (_context.Users.Any(e => e.Username == userRequest.Username)) throw new Exception("Username existed");
+
             var user = _mapper.Map<User>(userRequest);
             user.Id = Guid.NewGuid();
             user.DateCreated = DateTime.Now;
             user.DateUpdated = DateTime.Now;
+            user.Password = Encryption.GenerateMD5(userRequest.Password);
 
             _context.Users.Add(user);
 
@@ -44,7 +48,7 @@ namespace Digital.Infrastructure.Service
             {
                 if (!_context.Roles.Any(e => e.Id == roleId)) throw new Exception("RoleId not existed");
 
-                RoleUser roleUser = new()   
+                RoleUser roleUser = new()
                 {
                     UsersId = user.Id,
                     RolesId = roleId
@@ -63,12 +67,17 @@ namespace Digital.Infrastructure.Service
 
             if (user != null)
             {
+                if (!userRequest.Username.Equals(user.Username))
+                {
+                    if (_context.Users.Any(e => e.Username.Equals(userRequest.Username))) throw new Exception("Username existed");
+                }
+
                 user = _mapper.Map(userRequest, user);
                 user.DateUpdated = DateTime.Now;
 
                 _context.Users.Update(user);
 
-                _context.RoleUsers.RemoveRange(_context.RoleUsers.Where(e=>e.UsersId == id));
+                _context.RoleUsers.RemoveRange(_context.RoleUsers.Where(e => e.UsersId == id));
 
                 userRequest.RoleIds.ForEach(roleId =>
                 {

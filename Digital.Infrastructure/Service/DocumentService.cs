@@ -7,6 +7,7 @@ using Digital.Infrastructure.Model.DocumentModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.WindowsAzure.Storage;
 
 namespace Digital.Infrastructure.Service
 {

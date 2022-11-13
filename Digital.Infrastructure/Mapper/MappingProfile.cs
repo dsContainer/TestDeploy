@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Digital.Data.Entities;
 using Digital.Infrastructure.Model.DocumentModel;
+using Digital.Infrastructure.Model.ProcessModel;
 using Digital.Infrastructure.Model.Requests;
 
 namespace Digital.Infrastructure.Mapper
@@ -16,6 +17,19 @@ namespace Digital.Infrastructure.Mapper
 
             #region User
             CreateMap<UserRequest, User>();
+            CreateMap<UserCreateRequest, User>();
+            #endregion
+
+            #region Process
+            CreateMap<Process, ProcessViewModel>();
+            CreateMap<ProcessCreateModel, Process>();
+            CreateMap<ProcessUpdateModel, Process>();
+            #endregion
+
+            #region ProcessStep
+            CreateMap<ProcessStep, ProcessStepViewModel>();
+            CreateMap<ProcessStepCreateModel, ProcessStep>();
+            CreateMap<ProcessStepUpdateModel, ProcessStep>();
             #endregion
         }
     }
