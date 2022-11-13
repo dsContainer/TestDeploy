@@ -37,6 +37,7 @@ builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDocumentTypeService, DocumentTypeService>();
 builder.Services.AddScoped<ISignatureService, SignatureService>();
+builder.Services.AddScoped<ITemplateService, TemplateService>();
 
 //Swagger
 builder.Services.AddSwaggerGen(c =>
