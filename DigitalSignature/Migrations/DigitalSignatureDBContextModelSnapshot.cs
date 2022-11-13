@@ -23,7 +23,7 @@ namespace DigitalSignature.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-            modelBuilder.Entity("Digital.Data.Entities.Batch", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.Batch", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -50,7 +50,7 @@ namespace DigitalSignature.Migrations
                     b.ToTable("Batches", (string)null);
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.BatchProcess", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.BatchProcess", b =>
                 {
                     b.Property<Guid>("BatchId")
                         .HasColumnType("uniqueidentifier");
@@ -65,7 +65,7 @@ namespace DigitalSignature.Migrations
                     b.ToTable("BatchProcess", (string)null);
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.Document", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.Document", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -112,7 +112,7 @@ namespace DigitalSignature.Migrations
                     b.ToTable("Documents", (string)null);
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.DocumentType", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.DocumentType", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -142,7 +142,7 @@ namespace DigitalSignature.Migrations
                     b.ToTable("DocumentTypes", (string)null);
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.Process", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.Process", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -169,6 +169,7 @@ namespace DigitalSignature.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("TemplateId")
+                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -180,7 +181,7 @@ namespace DigitalSignature.Migrations
                     b.ToTable("Processes", (string)null);
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.ProcessData", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.ProcessData", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -217,7 +218,7 @@ namespace DigitalSignature.Migrations
                     b.ToTable("ProcessDatas", (string)null);
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.ProcessStep", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.ProcessStep", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -238,6 +239,7 @@ namespace DigitalSignature.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("Message")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<float?>("OrderIndex")
@@ -282,7 +284,7 @@ namespace DigitalSignature.Migrations
                     b.ToTable("ProcessSteps", (string)null);
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.Role", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -304,7 +306,7 @@ namespace DigitalSignature.Migrations
                     b.ToTable("Roles", (string)null);
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.RoleUser", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.RoleUser", b =>
                 {
                     b.Property<Guid>("RolesId")
                         .HasColumnType("uniqueidentifier");
@@ -319,7 +321,7 @@ namespace DigitalSignature.Migrations
                     b.ToTable("RoleUser", (string)null);
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.Signature", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.Signature", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -344,7 +346,7 @@ namespace DigitalSignature.Migrations
                     b.ToTable("Signatures", (string)null);
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.Template", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.Template", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -383,7 +385,7 @@ namespace DigitalSignature.Migrations
                     b.ToTable("Templates", (string)null);
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.User", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .HasColumnType("uniqueidentifier");
@@ -428,15 +430,15 @@ namespace DigitalSignature.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.BatchProcess", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.BatchProcess", b =>
                 {
-                    b.HasOne("Digital.Data.Entities.Batch", "Batch")
+                    b.HasOne("DigitalSignature.Entities.Batch", "Batch")
                         .WithMany("BatchProcesses")
                         .HasForeignKey("BatchId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Digital.Data.Entities.Process", "Process")
+                    b.HasOne("DigitalSignature.Entities.Process", "Process")
                         .WithMany("BatchProcesses")
                         .HasForeignKey("ProcessId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -447,21 +449,21 @@ namespace DigitalSignature.Migrations
                     b.Navigation("Process");
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.Document", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.Document", b =>
                 {
-                    b.HasOne("Digital.Data.Entities.DocumentType", "DocumentType")
+                    b.HasOne("DigitalSignature.Entities.DocumentType", "DocumentType")
                         .WithMany("Documents")
                         .HasForeignKey("DocumentTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Digital.Data.Entities.User", "Owner")
+                    b.HasOne("DigitalSignature.Entities.User", "Owner")
                         .WithMany("Documents")
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Digital.Data.Entities.Process", "Process")
+                    b.HasOne("DigitalSignature.Entities.Process", "Process")
                         .WithMany("Documents")
                         .HasForeignKey("ProcessId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -474,18 +476,20 @@ namespace DigitalSignature.Migrations
                     b.Navigation("Process");
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.Process", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.Process", b =>
                 {
-                    b.HasOne("Digital.Data.Entities.Template", "Template")
+                    b.HasOne("DigitalSignature.Entities.Template", "Template")
                         .WithOne("Process")
-                        .HasForeignKey("Digital.Data.Entities.Process", "TemplateId");
+                        .HasForeignKey("DigitalSignature.Entities.Process", "TemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Template");
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.ProcessData", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.ProcessData", b =>
                 {
-                    b.HasOne("Digital.Data.Entities.Process", "Process")
+                    b.HasOne("DigitalSignature.Entities.Process", "Process")
                         .WithMany("ProcessData")
                         .HasForeignKey("ProcessId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -494,17 +498,17 @@ namespace DigitalSignature.Migrations
                     b.Navigation("Process");
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.ProcessStep", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.ProcessStep", b =>
                 {
-                    b.HasOne("Digital.Data.Entities.Process", "Process")
+                    b.HasOne("DigitalSignature.Entities.Process", "Process")
                         .WithMany("ProcessSteps")
                         .HasForeignKey("ProcessId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Digital.Data.Entities.User", "User")
+                    b.HasOne("DigitalSignature.Entities.User", "User")
                         .WithOne("ProcessStep")
-                        .HasForeignKey("Digital.Data.Entities.ProcessStep", "UserId")
+                        .HasForeignKey("DigitalSignature.Entities.ProcessStep", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -513,15 +517,15 @@ namespace DigitalSignature.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.RoleUser", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.RoleUser", b =>
                 {
-                    b.HasOne("Digital.Data.Entities.Role", "Roles")
+                    b.HasOne("DigitalSignature.Entities.Role", "Roles")
                         .WithMany("RoleUsers")
                         .HasForeignKey("RolesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Digital.Data.Entities.User", "Users")
+                    b.HasOne("DigitalSignature.Entities.User", "Users")
                         .WithMany("RoleUsers")
                         .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -532,20 +536,20 @@ namespace DigitalSignature.Migrations
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.Signature", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.Signature", b =>
                 {
-                    b.HasOne("Digital.Data.Entities.User", "User")
+                    b.HasOne("DigitalSignature.Entities.User", "User")
                         .WithOne("Signature")
-                        .HasForeignKey("Digital.Data.Entities.Signature", "UserId")
+                        .HasForeignKey("DigitalSignature.Entities.Signature", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.Template", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.Template", b =>
                 {
-                    b.HasOne("Digital.Data.Entities.DocumentType", "DocumentType")
+                    b.HasOne("DigitalSignature.Entities.DocumentType", "DocumentType")
                         .WithMany("Templates")
                         .HasForeignKey("DocumentTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -554,19 +558,19 @@ namespace DigitalSignature.Migrations
                     b.Navigation("DocumentType");
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.Batch", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.Batch", b =>
                 {
                     b.Navigation("BatchProcesses");
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.DocumentType", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.DocumentType", b =>
                 {
                     b.Navigation("Documents");
 
                     b.Navigation("Templates");
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.Process", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.Process", b =>
                 {
                     b.Navigation("BatchProcesses");
 
@@ -577,18 +581,18 @@ namespace DigitalSignature.Migrations
                     b.Navigation("ProcessSteps");
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.Role", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.Role", b =>
                 {
                     b.Navigation("RoleUsers");
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.Template", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.Template", b =>
                 {
                     b.Navigation("Process")
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Digital.Data.Entities.User", b =>
+            modelBuilder.Entity("DigitalSignature.Entities.User", b =>
                 {
                     b.Navigation("Documents");
 
