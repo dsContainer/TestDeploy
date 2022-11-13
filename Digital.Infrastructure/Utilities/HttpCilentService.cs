@@ -1,6 +1,7 @@
 ﻿using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model;
 using System.Net.Http.Headers;
+using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 
 namespace Digital.Infrastructure.Utilities

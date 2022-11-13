@@ -1,4 +1,5 @@
-﻿namespace Digital.Infrastructure.Utilities
+﻿using Microsoft.AspNetCore.Http;
+namespace Digital.Infrastructure.Utilities
 {
     public interface IUserContextService
     {
