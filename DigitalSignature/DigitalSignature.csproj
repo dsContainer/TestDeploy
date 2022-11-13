@@ -27,6 +27,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Digital.Data\Digital.Data.csproj" />
     <ProjectReference Include="..\Digital.Infrastructure\Digital.Infrastructure.csproj" />
   </ItemGroup>
 
