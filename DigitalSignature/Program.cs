@@ -37,6 +37,8 @@ builder.Services.AddScoped<ILoginService, LoginService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IDocumentTypeService, DocumentTypeService>();
 builder.Services.AddScoped<ISignatureService, SignatureService>();
+builder.Services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
+
 
 //Swagger
 builder.Services.AddSwaggerGen(c =>
