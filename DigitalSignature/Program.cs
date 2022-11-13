@@ -39,6 +39,7 @@ builder.Services.AddScoped<IDocumentTypeService, DocumentTypeService>();
 builder.Services.AddScoped<ISignatureService, SignatureService>();
 builder.Services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
 
+builder.Services.AddScoped<ITemplateService, TemplateService>();
 
 //Swagger
 builder.Services.AddSwaggerGen(c =>
@@ -87,6 +88,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     };
 });
 
+builder.Services.AddControllersWithViews()
+    .AddNewtonsoftJson(options =>
+    options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore
+);
 
 var app = builder.Build();
 

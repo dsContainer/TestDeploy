@@ -2,6 +2,7 @@
 using Digital.Data.Entities;
 using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model.Requests;
+using Microsoft.EntityFrameworkCore;
 
 namespace Digital.Infrastructure.Service
 {
@@ -17,13 +18,16 @@ namespace Digital.Infrastructure.Service
 
         public List<User> GetUsers()
         {
-            var users = _context.Users.ToList();
+            var users = _context.Users.Include(e=>e.RoleUsers).ThenInclude(e=>e.Roles)
+                           .Include(e=>e.Signature).Include(e=>e.ProcessStep).AsNoTracking().ToList();
+
             return users;
         }
 
         public User GetUser(Guid id)
         {
-            var user = _context.Users.Find(id);
+            var user = _context.Users.Include(e => e.RoleUsers).ThenInclude(e => e.Roles)
+                           .Include(e => e.Signature).Include(e => e.ProcessStep).AsNoTracking().FirstOrDefault(e=>e.Id==id);
             return user;
         }
 
@@ -36,9 +40,21 @@ namespace Digital.Infrastructure.Service
 
             _context.Users.Add(user);
 
+            userRequest.RoleIds.ForEach(roleId =>
+            {
+                if (!_context.Roles.Any(e => e.Id == roleId)) throw new Exception("RoleId not existed");
+
+                RoleUser roleUser = new()   
+                {
+                    UsersId = user.Id,
+                    RolesId = roleId
+                };
+                _context.RoleUsers.Add(roleUser);
+            });
+
             _context.SaveChanges();
 
-            return user;
+            return GetUser(user.Id);
         }
 
         public User UpdateUser(Guid id, UserRequest userRequest)
@@ -52,10 +68,24 @@ namespace Digital.Infrastructure.Service
 
                 _context.Users.Update(user);
 
+                _context.RoleUsers.RemoveRange(_context.RoleUsers.Where(e=>e.UsersId == id));
+
+                userRequest.RoleIds.ForEach(roleId =>
+                {
+                    if (!_context.Roles.Any(e => e.Id == roleId)) throw new Exception("RoleId not existed");
+
+                    RoleUser roleUser = new()
+                    {
+                        UsersId = user.Id,
+                        RolesId = roleId
+                    };
+                    _context.RoleUsers.Add(roleUser);
+                });
+
                 _context.SaveChanges();
             }
 
-            return user;
+            return GetUser(user.Id);
         }
 
         public User DeletedUser(Guid id, bool isDeleted)
@@ -72,7 +102,7 @@ namespace Digital.Infrastructure.Service
                 _context.SaveChanges();
             }
 
-            return user;
+            return GetUser(user.Id);
         }
     }
 }

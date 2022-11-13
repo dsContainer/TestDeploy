@@ -8,7 +8,7 @@
         public string FullName { get; set; }
         public string Password { get; set; }
         public bool IsDeleted { get; set; }
-        public Guid RoleId { get; set; }
+        public List<Guid> RoleIds { get; set; }
         public Guid SigId { get; set; }
     }
 }
