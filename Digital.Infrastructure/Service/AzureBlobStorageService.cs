@@ -6,6 +6,12 @@ using Digital.Infrastructure.Model.DocumentModel;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.WindowsAzure.Storage;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Digital.Infrastructure.Service
 {
@@ -122,7 +128,6 @@ namespace Digital.Infrastructure.Service
 
             // Get a reference to a container named in appsettings.json and then create it
             BlobContainerClient container = new BlobContainerClient(_storageConnectionString, _storageContainerName);
-
             // Create the container if it does not exist
             await container.CreateIfNotExistsAsync();
 

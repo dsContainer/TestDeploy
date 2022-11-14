@@ -3,6 +3,7 @@ using Digital.Data.Entities;
 using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Mapper;
 using Digital.Infrastructure.Service;
+using Digital.Infrastructure.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -42,9 +43,13 @@ builder.Services.AddScoped<ISignatureService, SignatureService>();
 builder.Services.AddScoped<IProcessService, ProcessService>();
 builder.Services.AddScoped<IProcessStepService, ProcessStepService>();
 builder.Services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
-
+builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddTransient<IUserContextService, UserContextService>();
 builder.Services.AddScoped<ITemplateService, TemplateService>();
+builder.Services.AddScoped<IOTPService, OTPService>();
 
+
+builder.Services.AddScoped<IDocumentService, DocumentService>();
 //Swagger
 builder.Services.AddSwaggerGen(c =>
 {

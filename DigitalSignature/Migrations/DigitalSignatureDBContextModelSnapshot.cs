@@ -169,7 +169,6 @@ namespace DigitalSignature.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<Guid?>("TemplateId")
-                        .IsRequired()
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
@@ -475,9 +474,7 @@ namespace DigitalSignature.Migrations
                 {
                     b.HasOne("Digital.Data.Entities.Template", "Template")
                         .WithOne("Process")
-                        .HasForeignKey("Digital.Data.Entities.Process", "TemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Digital.Data.Entities.Process", "TemplateId");
 
                     b.Navigation("Template");
                 });

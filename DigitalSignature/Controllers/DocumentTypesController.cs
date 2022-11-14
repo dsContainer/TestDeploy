@@ -1,4 +1,5 @@
-﻿using Digital.Infrastructure.Interface;
+﻿using System.ComponentModel.DataAnnotations;
+using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model.DocumentModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -65,17 +66,15 @@ namespace DigitalSignature.Controllers
         /// <summary>
         /// delete DocType
         /// </summary>
-        /// <param name="Id"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("{Id}")]
-        public async Task<IActionResult> Delete(Guid Id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteDoc([Required] Guid id)
         {
-            var result = await _service.DeleteDocumentType(Id);
-            if (result != null)
-            {
-                return Ok(result);
-            }
-            return NotFound();
+            var result = await _service.DeleteDocumentType(id);
+
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
         }
 
 

@@ -18,6 +18,14 @@ namespace Digital.Infrastructure.Mapper
             #region User
             CreateMap<UserRequest, User>();
             CreateMap<UserCreateRequest, User>();
+            CreateMap<User, UserViewModel>();
+            #endregion
+
+
+            #region Document
+            CreateMap<Document, DocumentViewModel>();
+            CreateMap<DocumentUploadApiRequest, Document>();
+
             #endregion
 
             #region Process

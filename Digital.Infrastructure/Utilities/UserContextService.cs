@@ -1,14 +1,8 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Digital.Infrastructure.Interface;
+using Microsoft.AspNetCore.Http;
 namespace Digital.Infrastructure.Utilities
 {
-    public interface IUserContextService
-    {
-        Guid? UserID { get; }
-        string? Username { get; }
-        string? FullName { get; }
-        string? Email { get; }
-        bool IsAuthenticated { get; }
-    }
+  
     public class UserContextService : IUserContextService
     {
         private readonly IHttpContextAccessor _contextAccessor;
