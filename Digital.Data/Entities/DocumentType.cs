@@ -18,5 +18,6 @@
 
         public virtual ICollection<Document> Documents { get; set; }
         public virtual ICollection<Template> Templates { get; set; }
+
     }
 }

@@ -21,7 +21,6 @@ namespace Digital.Infrastructure.Mapper
             CreateMap<User, UserViewModel>();
             #endregion
 
-
             #region Document
             CreateMap<Document, DocumentViewModel>();
             CreateMap<DocumentUploadApiRequest, Document>();
@@ -35,7 +34,7 @@ namespace Digital.Infrastructure.Mapper
             #endregion
 
             #region ProcessStep
-            CreateMap<ProcessStep, ProcessStepViewModel>();
+            CreateMap<ProcessStep, ProcessStepModel>();
             CreateMap<ProcessStepCreateModel, ProcessStep>();
             CreateMap<ProcessStepUpdateModel, ProcessStep>();
             #endregion
