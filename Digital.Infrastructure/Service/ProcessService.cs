@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using static iTextSharp.text.pdf.AcroFields;
 
 namespace Digital.Infrastructure.Service
 {
@@ -33,10 +34,14 @@ namespace Digital.Infrastructure.Service
                 process.Id = Guid.NewGuid();
                 process.DateCreated = DateTime.Now;
                 process.DateUpdated = DateTime.Now;
-                //if(process.TemplateId == null) 
-                //{
-                //    process.Template = new();
-                //}
+                if (process.TemplateId != null)
+                {
+                    var template = await _context.Templates.FindAsync(process.TemplateId);
+                    if(template != null)
+                    {
+                        process.Template = template;
+                    }
+                }
                 var list = process.ProcessSteps;
                 if(list!= null)
                 {
@@ -118,7 +123,21 @@ namespace Digital.Infrastructure.Service
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.ResponseSuccess = processes;
+                var process = _mapper.Map<ProcessViewModel>(processes);
+                DocumentType? docType;
+                if (process.TemplateId == null)
+                {
+                    docType = await _context.DocumentTypes.Where(x => x.Name == "Contract").FirstOrDefaultAsync();
+                }
+                else
+                {
+                    docType = await _context.DocumentTypes.FindAsync(processes.Template!.DocumentTypeId);
+                }
+                if (docType != null)
+                {
+                    process.DocumentType = docType;
+                }
+                result.ResponseSuccess = process;
 
             }
             catch (Exception e)
@@ -172,11 +191,31 @@ namespace Digital.Infrastructure.Service
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.ResponseSuccess = processes;
+                var p = new List<ProcessViewModel>();
+                foreach (var item in processes)
+                {
+                    var process = _mapper.Map<ProcessViewModel>(item);
+                    DocumentType? docType;
+                    if(process.TemplateId == null)
+                    {
+                        docType = await _context.DocumentTypes.Where(x => x.Name == "Contract").FirstOrDefaultAsync();
+                    }
+                    else
+                    {
+                        docType = await _context.DocumentTypes.FindAsync(item.Template!.DocumentTypeId);
+                    }
+                    if (docType != null)
+                    {
+                        process.DocumentType = docType;
+                    }
+                    p.Add(process);
+                }
+                result.ResponseSuccess = p;
 
             }
             catch (Exception e)
             {
+                result.Code = 400;
                 result.IsSuccess = false;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
