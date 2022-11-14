@@ -36,6 +36,7 @@ namespace Digital.Infrastructure.Service
                 }
 
                 documentType = _mapper.Map<DocumentType>(model);
+                documentType.Id = Guid.NewGuid();
                 documentType.NormalizationName = model.Name.ToUpper();
 
                 await _context.DocumentTypes.AddAsync(documentType);
