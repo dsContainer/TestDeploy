@@ -18,6 +18,43 @@ namespace Digital.Infrastructure.Service
             _context = context;
             _mapper = mapper;
         }
+
+        public async Task<ResultModel> ChangeStatus(string data, Guid templateId)
+        {
+            var result = new ResultModel();
+            try
+            {
+                if (data != "true" || data != "false" || data != "True" || data != "False")
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.ResponseFailed = "Status chỉ có thể là \"true\" or \"false\"";
+                    return result;
+}
+                var templateToDo = _context.Templates.FirstOrDefault(x => x.Id == templateId);
+                if (templateToDo == null)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.ResponseFailed = "Dont have any template";
+                }
+                else
+                {
+                    templateToDo.IsDeleted = Boolean.Parse(data);
+                   await _context.SaveChangesAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+
+
+            return result;
+        }
+
         public async Task<ResultModel> GetTemplate()
         {
             var result = new ResultModel();
@@ -44,6 +81,34 @@ namespace Digital.Infrastructure.Service
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
 
+            return result;
+        }
+
+        public async Task<ResultModel> GetTemplateById(Guid TempalateId)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var templateResult = _context.Templates.FirstOrDefault(x => x.Id == TempalateId);
+                if (templateResult != null)
+                {
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                    result.ResponseSuccess = templateResult;
+                }
+                else
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.ResponseSuccess = "Template dont found";
+                }
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
             return result;
         }
 

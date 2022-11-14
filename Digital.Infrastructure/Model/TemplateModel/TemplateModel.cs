@@ -12,4 +12,5 @@ namespace Digital.Infrastructure.Model.TemplateModel
         public IFormFile? File { get; set; }
 
     }
+
 }

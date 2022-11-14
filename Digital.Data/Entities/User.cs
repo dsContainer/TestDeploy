@@ -14,7 +14,6 @@
         public string Username { get; set; }
         public string FullName { get; set; }
         public string Password { get; set; }
-        public Guid RoleId { get; set; }
         public Guid SigId { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }

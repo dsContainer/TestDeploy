@@ -7,5 +7,7 @@ namespace Digital.Infrastructure.Interface
     {
         Task<ResultModel> GetTemplate();
         Task<ResultModel> UploadTemplate(TemplateModel model, Guid documentTypeId);
+        Task<ResultModel> GetTemplateById(Guid TempalateId);
+        Task<ResultModel> ChangeStatus(string data, Guid templateId);
     }
 }

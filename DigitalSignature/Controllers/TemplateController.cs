@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DigitalSignature.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     [ApiController]
     public class TemplateController : Controller
     {
@@ -24,7 +24,7 @@ namespace DigitalSignature.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
-        [HttpGet("GetTemplate")]
+        [HttpGet("Templates")]
         public async Task<IActionResult> GetTemplate()
         {
             var result = await _service.GetTemplate();
@@ -39,7 +39,7 @@ namespace DigitalSignature.Controllers
         /// <param name="model"></param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
-        [HttpPost("UploadTemplate")]
+        [HttpPost("Template")]
         public async Task<IActionResult> UploadTemplate([FromForm] TemplateModel model, Guid documentTypeId)
         {
             var result = await _service.UploadTemplate(model, documentTypeId);
@@ -47,5 +47,37 @@ namespace DigitalSignature.Controllers
             if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
             return BadRequest(result);
         }
+
+        /// <summary>
+        /// Get Template By Id
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
+        [HttpGet("Template/{id}")]
+        public async Task<IActionResult> GetTemplateById(Guid id)
+        {
+            var result = await _service.GetTemplateById(id);
+
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
+        }
+
+        /// <summary>
+        /// Change Status
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
+        [HttpPut("{id}/{isDeleted}")]
+        public async Task<IActionResult> ChangeStatus(string data, Guid templateId)
+        {
+            var result = await _service.ChangeStatus( data,  templateId);
+
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
+        }
+
+        
     }
 }
