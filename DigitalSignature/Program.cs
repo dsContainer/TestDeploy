@@ -46,6 +46,8 @@ builder.Services.AddScoped<IAzureBlobStorageService, AzureBlobStorageService>();
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient<IUserContextService, UserContextService>();
 builder.Services.AddScoped<ITemplateService, TemplateService>();
+builder.Services.AddScoped<IOTPService, OTPService>();
+
 
 builder.Services.AddScoped<IDocumentService, DocumentService>();
 //Swagger
