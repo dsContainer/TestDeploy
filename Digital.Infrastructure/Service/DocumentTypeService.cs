@@ -185,5 +185,22 @@ namespace Digital.Infrastructure.Service
             }
             return result;
         }
+
+        public DocumentType DeletedDocument(Guid id, bool isDeleted)
+        {
+            var documentType = _context.DocumentTypes.Find(id);
+
+            if (documentType != null)
+            {
+                documentType.DateUpdated = DateTime.Now;
+                documentType.IsDeleted = isDeleted;
+
+                _context.DocumentTypes.Update(documentType);
+
+                _context.SaveChanges();
+            }
+
+            return documentType;
+        }
     }
 }

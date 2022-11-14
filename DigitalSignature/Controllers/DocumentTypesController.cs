@@ -1,6 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Digital.Infrastructure.Interface;
+using Digital.Infrastructure.Model;
 using Digital.Infrastructure.Model.DocumentModel;
+using Digital.Infrastructure.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -92,6 +94,23 @@ namespace DigitalSignature.Controllers
                 return Ok(result);
             }
             return NotFound();
+        }
+
+        [HttpPut("{id}/{isDeleted}")]
+        public async Task<ActionResult> PutDeletedDocument(Guid id, bool isDeleted)
+        {
+            try
+            {
+                var data = _service.DeletedDocument(id, isDeleted);
+
+                if (data == null) return await Task.FromResult(StatusCode(StatusCodes.Status404NotFound, new ResultModel() { IsSuccess = true, Code = StatusCodes.Status404NotFound, ResponseFailed = "Not found Document" }));
+
+                return await Task.FromResult(StatusCode(StatusCodes.Status200OK, new ResultModel() { IsSuccess = true, Code = StatusCodes.Status200OK, ResponseSuccess = data }));
+            }
+            catch (Exception ex)
+            {
+                return await Task.FromResult(StatusCode(StatusCodes.Status400BadRequest, new ResultModel() { IsSuccess = false, Code = StatusCodes.Status400BadRequest, ResponseFailed = ex.Message }));
+            }
         }
     }
 }
