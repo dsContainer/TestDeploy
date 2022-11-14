@@ -77,5 +77,18 @@ namespace DigitalSignature.Controllers
             if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
             return BadRequest(result);
         }
+
+        /// <summary>
+        /// get a Document detail by Id
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpGet("{Id}")]
+        public async Task<IActionResult> GetDocumentDetail(Guid Id)
+        {
+            var result = await _service.GetDocumentDetail( Id);
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
+        }
     }
 }
