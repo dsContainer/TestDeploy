@@ -21,7 +21,7 @@ namespace Digital.Infrastructure.Service
         private readonly DigitalSignatureDBContext _context;
         private readonly IMapper _mapper;
         private readonly IUserContextService _userContext;
-        
+
         private readonly string _storageConnectionString;
         private readonly string _storageContainerName;
 
@@ -37,7 +37,7 @@ namespace Digital.Infrastructure.Service
             _storageConnectionString = configuration["BlobConnectionString"];
             _storageContainerName = configuration["BlobContainerName"];
         }
-        
+
         public async Task<ResultModel> CreateAsync(DocumentUploadApiRequest model)
         {
             var result = new ResultModel();
@@ -111,7 +111,7 @@ namespace Digital.Infrastructure.Service
             var result = new ResultModel();
             try
             {
-                var doc= _context.Documents.Where(x => !x.IsDeleted);
+                var doc = _context.Documents.Where(x => !x.IsDeleted);
 
                 if (doc == null)
                 {
@@ -143,8 +143,10 @@ namespace Digital.Infrastructure.Service
             var transaction = _context.Database.BeginTransaction();
             try
             {
-                var document = await _context.Documents.FirstOrDefaultAsync(x => !x.IsDeleted && x.Id == id);
+                BlobContainerClient client = new BlobContainerClient(_storageConnectionString, _storageContainerName);
 
+                var document = await _context.Documents.FirstOrDefaultAsync(x => x.Id == id);
+                BlobClient file = client.GetBlobClient(document.FileName);
                 if (document == null)
                 {
                     result.Code = 400;
@@ -152,7 +154,7 @@ namespace Digital.Infrastructure.Service
                     result.ResponseFailed = $"Doc with id: {id} not existed!!";
                     return result;
                 }
-
+                await file.DeleteAsync();
                 _context.Documents.Remove(document);
                 await _context.SaveChangesAsync();
 
