@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DigitalSignature.Migrations
 {
     [DbContext(typeof(DigitalSignatureDBContext))]
-    [Migration("20221113160957_UpdateDeletIsActiveTemplateTable")]
-    partial class UpdateDeletIsActiveTemplateTable
+    [Migration("20221114182641_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -410,9 +410,6 @@ namespace DigitalSignature.Migrations
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("RoleId")
-                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("SigId")
                         .HasColumnType("uniqueidentifier");

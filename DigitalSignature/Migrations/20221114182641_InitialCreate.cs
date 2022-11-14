@@ -4,7 +4,7 @@
 
 namespace DigitalSignature.Migrations
 {
-    public partial class UpdateUserRole : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

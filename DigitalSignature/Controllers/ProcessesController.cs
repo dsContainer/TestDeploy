@@ -69,7 +69,7 @@ namespace DigitalSignature.Controllers
         /// </summary>
         /// <param name="Id"></param>
         /// <returns></returns>
-        [HttpDelete("{Id}/{isDeleted}")]
+        [HttpPut("{Id}/{isDeleted}")]
         public async Task<IActionResult> Delete(Guid Id, bool isDeleted)
         {
             var result = await _service.DeleteProcess(Id, isDeleted);

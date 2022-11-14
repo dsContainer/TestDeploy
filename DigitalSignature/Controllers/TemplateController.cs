@@ -25,11 +25,11 @@ namespace DigitalSignature.Controllers
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
         [HttpGet("Templates")]
-        public async Task<IActionResult> GetTemplate()
+        public async Task<ActionResult> GetTemplate()
         {
             var result = await _service.GetTemplate();
 
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
 
@@ -44,7 +44,7 @@ namespace DigitalSignature.Controllers
         {
             var result = await _service.UploadTemplate(model, documentTypeId);
 
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
 
@@ -59,22 +59,18 @@ namespace DigitalSignature.Controllers
         {
             var result = await _service.GetTemplateById(id);
 
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
 
-        /// <summary>
-        /// Change Status
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
+        
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
         [HttpPut("{id}/{isDeleted}")]
-        public async Task<IActionResult> ChangeStatus(string data, Guid templateId)
+        public async Task<IActionResult> ChangeStatus(Guid id, bool isDeleted)
         {
-            var result = await _service.ChangeStatus( data,  templateId);
+            var result = await _service.ChangeStatus(id, isDeleted);
 
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
 

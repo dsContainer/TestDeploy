@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DigitalSignature.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     [ApiController]
     public class UserController : ControllerBase
     {

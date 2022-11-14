@@ -19,19 +19,12 @@ namespace Digital.Infrastructure.Service
             _mapper = mapper;
         }
 
-        public async Task<ResultModel> ChangeStatus(string data, Guid templateId)
+        public async Task<ResultModel> ChangeStatus(Guid id, bool isDeleted)
         {
             var result = new ResultModel();
             try
             {
-                if (data != "true" || data != "false" || data != "True" || data != "False")
-                {
-                    result.IsSuccess = false;
-                    result.Code = 400;
-                    result.ResponseFailed = "Status chỉ có thể là \"true\" or \"false\"";
-                    return result;
-}
-                var templateToDo = _context.Templates.FirstOrDefault(x => x.Id == templateId);
+                var templateToDo = _context.Templates.FirstOrDefault(x => x.Id == id);
                 if (templateToDo == null)
                 {
                     result.IsSuccess = false;
@@ -40,7 +33,8 @@ namespace Digital.Infrastructure.Service
                 }
                 else
                 {
-                    templateToDo.IsDeleted = Boolean.Parse(data);
+                   templateToDo.IsDeleted = isDeleted;
+                   _context.Templates.Update(templateToDo);
                    await _context.SaveChangesAsync();
                 }
             }
@@ -61,17 +55,25 @@ namespace Digital.Infrastructure.Service
             try
             {
                 var listTemplate = await _context.Templates.ToListAsync();
+
                 if (listTemplate.Count != 0)
                 {
+                    var listTemplateResult = _mapper.Map<List<TemplateViewModel>>(listTemplate);
+                    foreach (var item in listTemplate)
+                    {
+                        var documentType = _context.DocumentTypes.FirstOrDefault(x => x.Id == item.DocumentTypeId);
+
+                    }
+
                     result.IsSuccess = true;
                     result.Code = 200;
-                    result.ResponseSuccess = listTemplate;
+                    result.ResponseSuccess = _mapper.Map<List<TemplateViewModel>>(listTemplate); 
                 }
                 else
                 {
                     result.IsSuccess = false;
                     result.Code = 400;
-                    result.ResponseSuccess = "Dont have any template";
+                    result.ResponseFailed = "Dont have any template";
                 }
             }
             catch (Exception e)
@@ -129,9 +131,9 @@ namespace Digital.Infrastructure.Service
                     var newTemplate = new Template
                     {
                         Id = Guid.NewGuid(),
-                        Name = model.Name,
-                        NormalizationName = model.Name.ToUpperInvariant(),
-                        Description = model.Description,
+                        Name = model.name,
+                        NormalizationName = model.name.ToUpperInvariant(),
+                        Description = model.description,
                         DocumentTypeId = documentTypeId,
                     };
                     await _context.Templates.AddAsync(newTemplate);
