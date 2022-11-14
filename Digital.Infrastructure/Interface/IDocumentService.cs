@@ -21,5 +21,6 @@ namespace Digital.Infrastructure.Interface
         Task<ResultModel> GetDocAsync();
 
         Task<ResultModel> DeleteDocument(Guid id);
+        Task<ResultModel> UpdateDocument(DocumentUpdateModel model, Guid Id);
     }
 }

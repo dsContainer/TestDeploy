@@ -63,5 +63,19 @@ namespace DigitalSignature.Controllers
             if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
             return BadRequest(result);
         }
+
+        /// <summary>
+        /// update Doc
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpPut("{Id}")]
+        public async Task<IActionResult> UpdateDoc(DocumentUpdateModel model, Guid Id)
+        {
+            var result = await _service.UpdateDocument(model, Id);
+
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
+        }
     }
 }

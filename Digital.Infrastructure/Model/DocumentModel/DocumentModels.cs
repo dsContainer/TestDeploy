@@ -30,6 +30,7 @@ namespace Digital.Infrastructure.Model.DocumentModel
     {
         public string? FileName { get; set; }
         public string? Description { get; set; }
+        public IFormFile? File { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }
         public Guid ProcessId { get; set; }
