@@ -28,7 +28,6 @@ namespace Digital.Infrastructure.Model.DocumentModel
 
     public class DocumentUploadApiRequest
     {
-        public string? FileName { get; set; }
         public string? Description { get; set; }
         public IFormFile? File { get; set; }
         public DateTime? StartDate { get; set; }
@@ -38,7 +37,6 @@ namespace Digital.Infrastructure.Model.DocumentModel
     }
     public class DocumentUpdateModel
     {
-        public string FileName { get; set; }
         public string Description { get; set; }
         public DateTime DateCreate { get; set; }
         public DateTime DateUpdate { get; set; }

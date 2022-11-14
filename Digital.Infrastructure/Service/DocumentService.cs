@@ -78,7 +78,7 @@ namespace Digital.Infrastructure.Service
                 {
                     Id = Guid.NewGuid(),
                     Description = model!.Description,
-                    FileName = model.FileName,
+                    FileName = response.Name,
                     FileExtension = response.Name.Split(".").Last(),
                     DocumentTypeId = model.DocumentTypeId,
                     ProcessId = model.ProcessId,
@@ -190,10 +190,7 @@ namespace Digital.Infrastructure.Service
                     return result;
                 }
 
-                document.FileName = model.FileName;
                 document.Description = model.Description;
-                document.DateCreated = model.DateCreate;
-                document.DateUpdated = model.DateUpdate;
                 _context.Documents.Update(document);
                 await _context.SaveChangesAsync();
                 result.IsSuccess = true;
