@@ -109,7 +109,7 @@ namespace Digital.Infrastructure.Service
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.ResponseSuccess = await _mapper.ProjectTo<DocumentTypeViewModel>(docTypes).ToListAsync();
+                result.ResponseSuccess = await _mapper.ProjectTo<DocumentTypeViewModel>(docTypes).FirstOrDefaultAsync();
 
             }
             catch (Exception e)
