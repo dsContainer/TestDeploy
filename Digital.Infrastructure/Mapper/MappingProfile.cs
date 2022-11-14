@@ -13,6 +13,8 @@ namespace Digital.Infrastructure.Mapper
             #region DocumentType
             CreateMap<DocumentType, DocumentTypeViewModel>();
             CreateMap<DocumentTypeCreateModel, DocumentType>();
+            CreateMap<DocumentTypeUpdateModel, DocumentType>();
+
             #endregion
 
             #region User

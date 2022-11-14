@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DigitalSignature.Controllers
 {
     [Route("api/[controller]")]
-    //[Authorize]
+    [Authorize]
     [ApiController]
     public class DocumentsController : ControllerBase
     {

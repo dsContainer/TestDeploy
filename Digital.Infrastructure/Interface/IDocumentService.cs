@@ -19,7 +19,7 @@ namespace Digital.Infrastructure.Interface
         Task<ResultModel> CreateAsync(DocumentUploadApiRequest model);
 
         Task<ResultModel> GetDocAsync();
-
+        Task<ResultModel> GetDocumentDetail(Guid id);
         Task<ResultModel> DeleteDocument(Guid id);
         Task<ResultModel> UpdateDocument(DocumentUpdateModel model, Guid Id);
     }

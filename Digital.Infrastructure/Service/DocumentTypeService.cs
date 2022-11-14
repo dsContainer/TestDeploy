@@ -168,14 +168,14 @@ namespace Digital.Infrastructure.Service
                 }
 
                 docType.Name = model.Name;
-                docType.NormalizationName = model.NormalizationName.ToUpper();
+                docType.NormalizationName = model.Name.ToUpper();
                 _context.DocumentTypes.Update(docType);
                 await _context.SaveChangesAsync();
                 result.IsSuccess = true;
                 result.Code = 200;
                 result.IsSuccess = true;
                 await transaction.CommitAsync();
-                result.ResponseSuccess = docType;
+                result.ResponseSuccess = _mapper.Map<DocumentTypeViewModel>(docType);
             }
             catch (Exception e)
             {

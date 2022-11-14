@@ -197,7 +197,7 @@ namespace Digital.Infrastructure.Service
                 result.Code = 200;
                 result.IsSuccess = true;
                 await transaction.CommitAsync();
-                result.ResponseSuccess = document;
+                result.ResponseSuccess = _mapper.Map<DocumentViewModel>(document);
             }
             catch (Exception e)
             {
@@ -205,6 +205,35 @@ namespace Digital.Infrastructure.Service
                 result.IsSuccess = false;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
+            return result;
+        }
+
+        public async Task<ResultModel> GetDocumentDetail(Guid id)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var docTypes = _context.Documents.Where(x => !x.IsDeleted && x.Id == id);
+
+                if (docTypes == null)
+                {
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.ResponseSuccess = $"Any DocumentType Not Found!";
+                    return result;
+                }
+
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.ResponseSuccess = await _mapper.ProjectTo<DocumentViewModel>(docTypes).FirstOrDefaultAsync();
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+
             return result;
         }
     }
