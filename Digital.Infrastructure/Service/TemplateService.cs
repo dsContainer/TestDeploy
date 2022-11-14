@@ -68,7 +68,6 @@ namespace Digital.Infrastructure.Service
                         NormalizationName = model.Name.ToUpperInvariant(),
                         Description = model.Description,
                         DocumentTypeId = documentTypeId,
-                        IsActive = true
                     };
                     await _context.Templates.AddAsync(newTemplate);
                     await _context.SaveChangesAsync();
