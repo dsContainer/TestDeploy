@@ -36,6 +36,7 @@ namespace Digital.Infrastructure.Service
                 }
 
                 documentType = _mapper.Map<DocumentType>(model);
+                documentType.Id = Guid.NewGuid();
                 documentType.NormalizationName = model.Name.ToUpper();
 
                 await _context.DocumentTypes.AddAsync(documentType);
@@ -57,13 +58,38 @@ namespace Digital.Infrastructure.Service
             return result;
         }
 
-        public async Task<int> DeleteDocumentType(Guid DocId)
+        public async Task<ResultModel> DeleteDocumentType(Guid id)
         {
-            var res = await _context.DocumentTypes.FindAsync(DocId);
-            if (res == null)
-                throw new Exception($"Cannot find an Doctype with id {DocId}");
-            _context.DocumentTypes.Remove(res);
-            return await _context.SaveChangesAsync();
+            var result = new ResultModel();
+            var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                var docType = await _context.DocumentTypes.FirstOrDefaultAsync(x => !x.IsDeleted && x.Id == id);
+
+                if (docType == null)
+                {
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.ResponseFailed = $"Doctype with id: {id} not existed!!";
+                    return result;
+                }
+
+                _context.DocumentTypes.Remove(docType);
+                await _context.SaveChangesAsync();
+
+                result.Code = 200;
+                result.ResponseSuccess = "Okie Br";
+                result.IsSuccess = true;
+            }
+            catch (Exception e)
+            {
+                await transaction.RollbackAsync();
+                result.IsSuccess = false;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+
+            await transaction.CommitAsync();
+            return result;
         }
 
         public async Task<ResultModel> GetDocumentTypeById(Guid id)
@@ -83,7 +109,7 @@ namespace Digital.Infrastructure.Service
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.ResponseSuccess = await _mapper.ProjectTo<DocumentTypeViewModel>(docTypes).ToListAsync();
+                result.ResponseSuccess = await _mapper.ProjectTo<DocumentTypeViewModel>(docTypes).FirstOrDefaultAsync();
 
             }
             catch (Exception e)
@@ -132,20 +158,24 @@ namespace Digital.Infrastructure.Service
             var transaction = _context.Database.BeginTransaction();
             try
             {
-                var docTypes = _context.DocumentTypes.Where(x => !x.IsDeleted);
-
-                if (docTypes == null)
+                var docType = await _context.DocumentTypes.FindAsync(Id);
+                if (docType == null)
                 {
-                    result.Code = 400;
-                    result.IsSuccess = false;
-                    result.ResponseSuccess = $"Any DocumentType Not Found!";
+                    result.Code = 200;
+                    result.IsSuccess = true;
+                    result.ResponseSuccess = new DocumentTypeUpdateModel();
                     return result;
                 }
 
+                docType.Name = model.Name;
+                docType.NormalizationName = model.Name.ToUpper();
+                _context.DocumentTypes.Update(docType);
+                await _context.SaveChangesAsync();
+                result.IsSuccess = true;
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.ResponseSuccess = await _mapper.ProjectTo<DocumentTypeViewModel>(docTypes).ToListAsync();
-
+                await transaction.CommitAsync();
+                result.ResponseSuccess = _mapper.Map<DocumentTypeViewModel>(docType);
             }
             catch (Exception e)
             {
@@ -154,6 +184,23 @@ namespace Digital.Infrastructure.Service
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
             return result;
+        }
+
+        public DocumentType DeletedDocument(Guid id, bool isDeleted)
+        {
+            var documentType = _context.DocumentTypes.Find(id);
+
+            if (documentType != null)
+            {
+                documentType.DateUpdated = DateTime.Now;
+                documentType.IsDeleted = isDeleted;
+
+                _context.DocumentTypes.Update(documentType);
+
+                _context.SaveChanges();
+            }
+
+            return documentType;
         }
     }
 }

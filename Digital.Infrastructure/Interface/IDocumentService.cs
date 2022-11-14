@@ -17,5 +17,10 @@ namespace Digital.Infrastructure.Interface
         /// <param name="file">File for upload</param>
         /// <returns>Blob with status</returns>
         Task<ResultModel> CreateAsync(DocumentUploadApiRequest model);
+
+        Task<ResultModel> GetDocAsync();
+        Task<ResultModel> GetDocumentDetail(Guid id);
+        Task<ResultModel> DeleteDocument(Guid id);
+        Task<ResultModel> UpdateDocument(DocumentUpdateModel model, Guid Id);
     }
 }

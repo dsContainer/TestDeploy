@@ -1,5 +1,8 @@
-﻿using Digital.Infrastructure.Interface;
+﻿using System.ComponentModel.DataAnnotations;
+using Digital.Infrastructure.Interface;
+using Digital.Infrastructure.Model;
 using Digital.Infrastructure.Model.DocumentModel;
+using Digital.Infrastructure.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -65,17 +68,15 @@ namespace DigitalSignature.Controllers
         /// <summary>
         /// delete DocType
         /// </summary>
-        /// <param name="Id"></param>
+        /// <param name="id"></param>
         /// <returns></returns>
-        [HttpDelete("{Id}")]
-        public async Task<IActionResult> Delete(Guid Id)
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteDoc([Required] Guid id)
         {
-            var result = await _service.DeleteDocumentType(Id);
-            if (result != null)
-            {
-                return Ok(result);
-            }
-            return NotFound();
+            var result = await _service.DeleteDocumentType(id);
+
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
         }
 
 
@@ -93,6 +94,23 @@ namespace DigitalSignature.Controllers
                 return Ok(result);
             }
             return NotFound();
+        }
+
+        [HttpPut("{id}/{isDeleted}")]
+        public async Task<ActionResult> PutDeletedDocument(Guid id, bool isDeleted)
+        {
+            try
+            {
+                var data = _service.DeletedDocument(id, isDeleted);
+
+                if (data == null) return await Task.FromResult(StatusCode(StatusCodes.Status404NotFound, new ResultModel() { IsSuccess = true, Code = StatusCodes.Status404NotFound, ResponseFailed = "Not found Document" }));
+
+                return await Task.FromResult(StatusCode(StatusCodes.Status200OK, new ResultModel() { IsSuccess = true, Code = StatusCodes.Status200OK, ResponseSuccess = data }));
+            }
+            catch (Exception ex)
+            {
+                return await Task.FromResult(StatusCode(StatusCodes.Status400BadRequest, new ResultModel() { IsSuccess = false, Code = StatusCodes.Status400BadRequest, ResponseFailed = ex.Message }));
+            }
         }
     }
 }

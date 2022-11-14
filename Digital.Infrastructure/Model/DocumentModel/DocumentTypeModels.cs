@@ -17,7 +17,6 @@
     public class DocumentTypeUpdateModel
     {
         public string? Name { get; set; }
-        public string? NormalizationName { get; set; }
     }
     public class DocumentTypeViewModel : DocumentTypeModel
     {
