@@ -169,7 +169,7 @@ namespace Digital.Infrastructure.Service
 
                 docType.Name = model.Name;
                 docType.NormalizationName = model.Name.ToUpper();
-                docType.IsDeleted = model.IsActive;
+                docType.IsActive = model.IsActive;
                 _context.DocumentTypes.Update(docType);
                 await _context.SaveChangesAsync();
                 result.IsSuccess = true;

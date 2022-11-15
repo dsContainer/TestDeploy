@@ -229,7 +229,7 @@ namespace Digital.Infrastructure.Service
             var result = new ResultModel();
             try
             {   
-                var docTypes = _context.Documents.Where(x => x.IsActive && x.Id == id);
+                var doc = _context.Documents.Where(x => x.IsActive && x.Id == id);
 
                 if (doc == null)
                 {
@@ -258,7 +258,7 @@ namespace Digital.Infrastructure.Service
         {
            
                 var document = await _context.Documents
-                .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+                .FirstOrDefaultAsync(x => x.Id == id && !x.IsActive);
                 BlobContainerClient client = new BlobContainerClient(_storageConnectionString, _storageContainerName);
                 try
             {
@@ -292,7 +292,7 @@ namespace Digital.Infrastructure.Service
             try
             {
                 var documents = _context.Documents
-                    .Where(x => !x.IsDeleted && (x.OwnerId == _userContext.UserID));
+                    .Where(x => !x.IsActive && (x.OwnerId == _userContext.UserID));
 
                 if (documents == null || documents.Count() < 0)
                 {
