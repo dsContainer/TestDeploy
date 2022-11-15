@@ -152,6 +152,39 @@ namespace Digital.Infrastructure.Service
             return result;
         }
 
+        public async Task<ResultModel> UpdateTemplate(Guid id, TemplateModel model)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var templateTpUpdate = _context.Templates.FirstOrDefault(x => x.Id== id);
+                if (templateTpUpdate == null)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.ResponseFailed = "Template not found";
+                }
+                else
+                {
+                    templateTpUpdate.Name = model.name;
+                    templateTpUpdate.Description = model.description;
+                    // file up storage
+                    _context.Templates.Update(templateTpUpdate);
+                    _context.SaveChanges();
+                    result.IsSuccess = true;
+                    result.Code = 200;
+                }
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
+        }
+
         public async Task<ResultModel> UploadTemplate(TemplateModel model, Guid documentTypeId)
         {
             var result = new ResultModel();

@@ -74,6 +74,23 @@ namespace DigitalSignature.Controllers
             return BadRequest(result);
         }
 
+
+
+        /// <summary>
+        /// Update template
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
+        [HttpPut]
+        public async Task<IActionResult> UpdateTemplate(Guid id, [FromForm] TemplateModel model)
+        {
+            var result = await _service.UpdateTemplate(id, model);
+
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
+            return BadRequest(result);
+        }
+
         
     }
 }
