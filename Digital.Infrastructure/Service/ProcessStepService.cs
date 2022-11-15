@@ -57,7 +57,7 @@ namespace Digital.Infrastructure.Service
             var processSteps = await _context.ProcessSteps.FindAsync(id);
             if (processSteps == null)
                 throw new Exception($"Cannot find a process step with id {id}");
-            processSteps.IsDeleted = isDeleted;
+            processSteps.IsActive = isDeleted;
             processSteps.DateUpdated = DateTime.Now;
             _context.ProcessSteps.Update(processSteps);
             return await _context.SaveChangesAsync();

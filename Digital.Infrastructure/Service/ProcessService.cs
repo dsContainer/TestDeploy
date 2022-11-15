@@ -84,10 +84,10 @@ namespace Digital.Infrastructure.Service
             var processSteps = await _context.ProcessSteps.Where(x => x.ProcessId == id).ToListAsync();
             foreach (var step in processSteps)
             {
-                step.IsDeleted = isDeleted;
+                step.IsActive = isDeleted;
                 step.DateUpdated = DateTime.Now;
             }
-            res.IsDeleted = isDeleted;
+            res.IsActive = isDeleted;
             res.DateUpdated = DateTime.Now;
             _context.ProcessSteps.UpdateRange(processSteps);
             _context.Processes.Update(res);
@@ -102,7 +102,6 @@ namespace Digital.Infrastructure.Service
                 var processes = await _context.Processes.
                     Include(e => e.ProcessSteps).
                     Include(e => e.Documents).
-                    Include(e => e.BatchProcesses).
                     Include(e => e.ProcessData).
                     Where(x => x.Id == id).
                     FirstOrDefaultAsync();
@@ -151,7 +150,6 @@ namespace Digital.Infrastructure.Service
                 var processes = await _context.Processes.
                     Include(e => e.ProcessSteps).
                     Include(e => e.Documents).
-                    Include(e => e.BatchProcesses).
                     Include(e => e.ProcessData).
                     ToListAsync();
 
@@ -170,7 +168,6 @@ namespace Digital.Infrastructure.Service
                     processes = await _context.Processes.
                         Include(e => e.ProcessSteps).
                         Include(e => e.Documents).
-                        Include(e => e.BatchProcesses).
                         Include(e => e.ProcessData).
                         Where(x => x.DateCreated.Date == CreatedDateToSearch.Date).
                         ToListAsync();

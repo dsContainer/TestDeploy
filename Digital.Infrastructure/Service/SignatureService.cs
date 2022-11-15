@@ -36,7 +36,7 @@ namespace Digital.Infrastructure.Service
                         Id = Guid.NewGuid(),
                         FromDate = DateTime.Now,
                         ToDate = DateTime.Now.AddYears(1),
-                        IsDelete = false,
+                        IsActive = false,
                         UserId = userId
                     };
                     await _context.Signatures.AddAsync(signature);
@@ -120,11 +120,11 @@ namespace Digital.Infrastructure.Service
             var result = new ResultModel();
             try
             {
-                var SignatureIdByUserName = _context.Users.Where(x => x.Username.Contains(data) && x.IsDeleted == false)
+                /*var SignatureIdByUserName = _context.Users.Where(x => x.Username.Contains(data) && x.IsActive == true)
                                                 .Select(x => x.SigId).ToList();
-                var SignatureIdByMail = _context.Users.Where(x => x.Email!.Contains(data) && x.IsDeleted == false)
+                var SignatureIdByMail = _context.Users.Where(x => x.Email!.Contains(data) && x.IsActive == true)
                                                 .Select(x => x.SigId).ToList();
-                var SignatureIdByPhone = _context.Users.Where(x => x.Phone!.Contains(data) && x.IsDeleted == false)
+                var SignatureIdByPhone = _context.Users.Where(x => x.Phone!.Contains(data) && x.IsActive == true)
                                                 .Select(x => x.SigId).ToList();
 
                 List<Guid> listSignatureId = new List<Guid>();
@@ -188,7 +188,7 @@ namespace Digital.Infrastructure.Service
 
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.ResponseSuccess = listSignature;
+                result.ResponseSuccess = listSignature;*/
 
             }
             catch (Exception e)

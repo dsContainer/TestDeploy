@@ -16,7 +16,6 @@ namespace Digital.Data.Entities
         }
 
         public virtual DbSet<Batch> Batches { get; set; }
-        public virtual DbSet<BatchProcess> BatchProcesses { get; set; }
         public virtual DbSet<Document> Documents { get; set; }
         public virtual DbSet<DocumentType> DocumentTypes { get; set; }
         public virtual DbSet<Process> Processes { get; set; }
@@ -42,22 +41,6 @@ namespace Digital.Data.Entities
                 entity.Property(e => e.Id).ValueGeneratedNever();
             });
 
-            modelBuilder.Entity<BatchProcess>(entity =>
-            {
-                entity.HasKey(e => new { e.BatchId, e.ProcessId });
-
-                entity.ToTable("BatchProcess");
-
-                entity.HasIndex(e => e.ProcessId, "IX_BatchProcess_ProcessId");
-
-                entity.HasOne(d => d.Batch)
-                    .WithMany(p => p.BatchProcesses)
-                    .HasForeignKey(d => d.BatchId);
-
-                entity.HasOne(d => d.Process)
-                    .WithMany(p => p.BatchProcesses)
-                    .HasForeignKey(d => d.ProcessId);
-            });
 
             modelBuilder.Entity<Document>(entity =>
             {
@@ -134,9 +117,6 @@ namespace Digital.Data.Entities
                     .WithMany(p => p.ProcessSteps)
                     .HasForeignKey(d => d.ProcessId);
 
-                entity.HasOne(d => d.User)
-                    .WithOne(p => p.ProcessStep)
-                    .HasForeignKey<ProcessStep>(d => d.UserId);
             });
 
             modelBuilder.Entity<Role>(entity =>
@@ -168,9 +148,6 @@ namespace Digital.Data.Entities
 
                 entity.Property(e => e.Id).ValueGeneratedNever();
 
-                entity.HasOne(d => d.User)
-                    .WithOne(p => p.Signature)
-                    .HasForeignKey<Signature>(d => d.UserId);
             });
 
             modelBuilder.Entity<Template>(entity =>
