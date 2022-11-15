@@ -1,4 +1,6 @@
-﻿using Digital.Infrastructure.Interface;
+﻿using Digital.Data.Enums;
+using Digital.Data.Utilities.Paging.PaginationModel;
+using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model.DocumentModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -46,6 +48,30 @@ namespace DigitalSignature.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// get all Document with paging with Current User
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("Paging")]
+        public async Task<IActionResult> GetPagingDocument([FromQuery]PagingParam<DocumentSortCriteria> paginationModel)
+        {
+            var result = await _service.GetPagingDocument(paginationModel);
+
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
+        }
+        /// <summary>
+        /// search  Document by fileName
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchDocbyName(string textSearch)
+        {
+            var result = await _service.SearchDocbyName(textSearch);
+
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
+        }
 
         /// <summary>
         /// delete doc

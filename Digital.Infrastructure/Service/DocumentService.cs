@@ -1,19 +1,17 @@
-﻿using System.Reflection.Metadata;
-using AutoMapper;
+﻿using AutoMapper;
 using Azure;
 using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Digital.Data.Entities;
+using Digital.Data.Enums;
+using Digital.Data.Utilities.Paging;
+using Digital.Data.Utilities.Paging.PaginationModel;
 using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model;
 using Digital.Infrastructure.Model.DocumentModel;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage;
-using SendGrid.Helpers.Mail;
-using static System.Reflection.Metadata.BlobBuilder;
-using Document = Digital.Data.Entities.Document;
 
 namespace Digital.Infrastructure.Service
 {
@@ -105,6 +103,8 @@ namespace Digital.Infrastructure.Service
                 _logger.LogError($"File with name {model.File.FileName} already exists in container. Set another name to store the file in the container: '{_storageContainerName}.'");
                 response.Status = $"File with name {model.File.FileName} already exists. Please use another name to store your file.";
                 response.Error = true;
+                result.IsSuccess = false;
+                result.ResponseFailed = "Document already exists. Please use another name to store your file";
             }
             catch (Exception e)
             {
@@ -283,6 +283,73 @@ namespace Digital.Infrastructure.Service
             }
                
             return null;
+        }
+
+
+        public async Task<ResultModel> GetPagingDocument(PagingParam<DocumentSortCriteria> paginationModel)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var documents = _context.Documents
+                    .Where(x => !x.IsDeleted && (x.OwnerId == _userContext.UserID));
+
+                if (documents == null || documents.Count() < 0)
+                {
+                    result.IsSuccess = false;
+                    result.Code = 400;
+                    result.ResponseFailed = $"User don't have any document";
+                    return result;
+                }
+
+
+                var paging = new PagingModel(paginationModel.PageIndex, paginationModel.PageSize, documents.Count());
+                documents = documents.GetWithSorting(paginationModel.SortKey.ToString(), paginationModel.SortOrder);
+                documents = documents.GetWithPaging(paginationModel.PageIndex, paginationModel.PageSize);
+
+                var viewData = await _mapper.ProjectTo<DocumentViewModel>(documents).ToListAsync();
+
+                paging.Data = viewData;
+
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.ResponseSuccess = paging;
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+
+            return result;
+        }
+
+        public async Task<ResultModel> SearchDocbyName(string textSearch)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var docEx = await _context.Documents.Where(x => x.FileName!.Contains(textSearch)).ToListAsync();
+                if (!docEx.Any())
+                {
+                    result.Code = 200;
+                    result.IsSuccess = true;
+                    result.ResponseSuccess = new DocumentViewModel();
+                    return result;
+                }
+
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.IsSuccess = true;
+                result.ResponseSuccess = _mapper.Map<List<DocumentViewModel>>(docEx);
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+            return result;
         }
     }
 }
