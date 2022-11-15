@@ -64,7 +64,7 @@ namespace Digital.Infrastructure.Service
             var transaction = _context.Database.BeginTransaction();
             try
             {
-                var docType = await _context.DocumentTypes.FirstOrDefaultAsync(x => !x.IsDeleted && x.Id == id);
+                var docType = await _context.DocumentTypes.FirstOrDefaultAsync(x => x.IsActive && x.Id == id);
 
                 if (docType == null)
                 {
@@ -97,7 +97,7 @@ namespace Digital.Infrastructure.Service
             var result = new ResultModel();
             try
             {
-                var docTypes = _context.DocumentTypes.Where(x => !x.IsDeleted && x.Id == id);
+                var docTypes = _context.DocumentTypes.Where(x => !x.IsActive && x.Id == id);
 
                 if (docTypes == null)
                 {
@@ -127,7 +127,7 @@ namespace Digital.Infrastructure.Service
             var result = new ResultModel();
             try
             {
-                var docTypes = _context.DocumentTypes.Where(x => !x.IsDeleted);
+                var docTypes = _context.DocumentTypes.Where(x => x.IsActive);
 
                 if (docTypes == null)
                 {
@@ -193,7 +193,7 @@ namespace Digital.Infrastructure.Service
             if (documentType != null)
             {
                 documentType.DateUpdated = DateTime.Now;
-                documentType.IsDeleted = isDeleted;
+                documentType.IsActive = isDeleted;
 
                 _context.DocumentTypes.Update(documentType);
 

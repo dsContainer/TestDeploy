@@ -2,7 +2,11 @@
 using Digital.Data.Entities;
 using Digital.Infrastructure.Common;
 using Digital.Infrastructure.Interface;
+using Digital.Infrastructure.Model;
 using Digital.Infrastructure.Model.Requests;
+using Digital.Infrastructure.Model.UserModel;
+using Digital.Infrastructure.Model.SignatureModel;
+using Digital.Infrastructure.Model.RoleUserModel;
 using Microsoft.EntityFrameworkCore;
 
 namespace Digital.Infrastructure.Service
@@ -17,18 +21,80 @@ namespace Digital.Infrastructure.Service
             _mapper = mapper;
         }
 
-        public List<User> GetUsers()
+        public async Task<ResultModel> GetUsers()
         {
-            var users = _context.Users.Include(e => e.RoleUsers).ThenInclude(e => e.Roles)
-                           .Include(e => e.Signature).Include(e => e.ProcessStep).AsNoTracking().ToList();
+            var result = new ResultModel();
+            try
+            {
+                var listUser =  _context.Users.ToList();
+                var listUserResult = new List<UserViewDetailModel>();
+                foreach (var user in listUser) 
+                { 
+                    var listSignature = _context.Signatures.Where(x => x.UserId== user.Id).ToList();
+                    //var listRole =  _context.Users.Where(x => x.Id == user.Id).SelectMany(x.);
+                    var listRoleUser = _context.RoleUsers.Where(x => x.UsersId == user.Id).ToList();
+                    var listRoleResult = new List<ListRoleViewModel>();
+                    foreach (var roleUser in listRoleUser)
+                    {
+                        var role = _context.Roles.FirstOrDefault(x => x.Id == roleUser.RolesId);
+                        var roleResult = new ListRoleViewModel
+                        {
+                            RoleId = role.Id,
+                            RoleName = role.Name,
+                            description= role.Description,
+                        };
+                        listRoleResult.Add(roleResult);
+                    }
 
-            return users;
+                    var listSigantureResult = new List<SignatureViewModel>();
+                    foreach (var sig in listSignature)
+                    {
+                        var signature = new SignatureViewModel
+                        {
+                            Id = sig.Id,
+                            FromDate = sig.FromDate,
+                            ToDate = sig.ToDate,
+                            IsDelete = sig.IsActive,
+                        };
+                        listSigantureResult.Add(signature);
+                    }
+                    var userToAdd = new UserViewDetailModel
+                    {
+                        Id = user.Id,
+                        Email = user.Email,
+                        Phone = user.Phone,
+                        Username = user.Username,
+                        FullName = user.FullName,
+                        Password = user.Password,
+                        IsDeleted = user.IsActive,
+                        Signature = listSigantureResult,
+                        listRole = listRoleResult,
+                    };
+                    listUserResult.Add(userToAdd);
+                }
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.ResponseSuccess = listUserResult;
+
+
+            }
+            catch (Exception e)
+            {
+                result.IsSuccess = false;
+                result.Code = 400;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+
+            //var users = _context.Users.Include(e => e.RoleUsers).ThenInclude(e => e.Roles)
+            //               .Include(e => e.Signature).Include(e => e.ProcessStep).AsNoTracking().ToList();
+
+            return result;
         }
 
         public User GetUser(Guid id)
         {
             var user = _context.Users.Include(e => e.RoleUsers).ThenInclude(e => e.Roles)
-                           .Include(e => e.Signature).Include(e => e.ProcessStep).AsNoTracking().FirstOrDefault(e => e.Id == id);
+                           .Include(e => e.Signature).AsNoTracking().FirstOrDefault(e => e.Id == id);
             return user;
         }
 
@@ -104,7 +170,7 @@ namespace Digital.Infrastructure.Service
             if (user != null)
             {
                 user.DateUpdated = DateTime.Now;
-                user.IsDeleted = isDeleted;
+                user.IsActive = isDeleted;
 
                 _context.Users.Update(user);
 
@@ -113,5 +179,6 @@ namespace Digital.Infrastructure.Service
 
             return GetUser(user.Id);
         }
+
     }
 }

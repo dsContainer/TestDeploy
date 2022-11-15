@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace Digital.Infrastructure.Model.RoleUserModel
 {
-    internal class RoleUserModel
+    public class RoleUserModel
     {
+    }
+    public class ListRoleViewModel
+    {
+        public Guid RoleId { get; set; }
+        public string RoleName { get; set; }
+        public string description { get; set; }
+
     }
 }

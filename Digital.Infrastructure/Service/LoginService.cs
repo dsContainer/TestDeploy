@@ -20,8 +20,8 @@ namespace Digital.Infrastructure.Service
         {
             var user = _context.Users
                            .Include(e => e.RoleUsers).ThenInclude(e => e.Roles)
-                           .Include(e => e.Signature).Include(e => e.ProcessStep)
-                           .FirstOrDefault(e => e.Username.Equals(userName) && e.IsDeleted == false);
+                           .Include(e => e.Signature)
+                           .FirstOrDefault(e => e.Username.Equals(userName) && e.IsActive == true);
 
             if (user != null)
             {

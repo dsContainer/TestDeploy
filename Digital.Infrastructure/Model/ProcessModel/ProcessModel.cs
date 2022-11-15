@@ -55,7 +55,6 @@ namespace Digital.Infrastructure.Model.ProcessModel
         public virtual ICollection<Document> Documents { get; set; }
         public virtual ICollection<ProcessData> ProcessData { get; set; }
         public virtual ICollection<ProcessStepModel> ProcessSteps { get; set; }
-        public virtual ICollection<BatchProcess> BatchProcesses { get; set; }
     }
 
     public class ProcessSearchModel

@@ -33,7 +33,7 @@ namespace Digital.Infrastructure.Service
                 }
                 else
                 {
-                   templateToDo.IsDeleted = isDeleted;
+                   templateToDo.IsActive = isDeleted;
                    _context.Templates.Update(templateToDo);
                    await _context.SaveChangesAsync();
                     result.IsSuccess = true;
@@ -79,7 +79,7 @@ namespace Digital.Infrastructure.Service
                             },
                             dateCreated = item.DateCreated,
                             dateUpdated = item.DateUpdated,
-                            isDeleted= item.IsDeleted
+                            isDeleted= item.IsActive
                         };
                         listTemplateToResult.Add(TemplateToResult);
                     }
@@ -129,7 +129,7 @@ namespace Digital.Infrastructure.Service
                         },
                         dateCreated = template.DateCreated,
                         dateUpdated = template.DateUpdated,
-                        isDeleted= template.IsDeleted
+                        isDeleted= template.IsActive
                     };
 
                     result.IsSuccess = true;

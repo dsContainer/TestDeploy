@@ -1,11 +1,12 @@
 ﻿using Digital.Data.Entities;
+using Digital.Infrastructure.Model;
 using Digital.Infrastructure.Model.Requests;
 
 namespace Digital.Infrastructure.Interface
 {
     public interface IUserService
     {
-        List<User> GetUsers();
+        Task<ResultModel> GetUsers();
         User GetUser(Guid id);
         User CreateUser(UserCreateRequest userRequest);
         User UpdateUser(Guid id, UserRequest userRequest);

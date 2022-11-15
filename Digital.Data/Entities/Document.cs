@@ -11,7 +11,7 @@
         public Guid ProcessId { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }
-        public bool IsDeleted { get; set; }
+        public bool IsActive { get; set; }
 
         public virtual DocumentType DocumentType { get; set; }
         public virtual User Owner { get; set; }

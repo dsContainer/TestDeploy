@@ -78,7 +78,7 @@ namespace Digital.Infrastructure.Service
                     DocumentTypeId = model.DocumentTypeId,
                     ProcessId = model.ProcessId,
                     OwnerId = Guid.Parse(ownId),
-                    Owner = _context.Users.FirstOrDefault(x => !x.IsDeleted && x.Id == Guid.Parse(ownId))
+                    Owner = _context.Users.FirstOrDefault(x => x.IsActive && x.Id == Guid.Parse(ownId))
                 };
 
                 await _context.Documents.AddAsync(document);
@@ -106,7 +106,7 @@ namespace Digital.Infrastructure.Service
             var result = new ResultModel();
             try
             {
-                var doc = _context.Documents.Where(x => !x.IsDeleted);
+                var doc = _context.Documents.Where(x => x.IsActive);
 
                 if (doc == null)
                 {
@@ -207,8 +207,8 @@ namespace Digital.Infrastructure.Service
         {
             var result = new ResultModel();
             try
-            {
-                var docTypes = _context.Documents.Where(x => !x.IsDeleted && x.Id == id);
+            {   
+                var docTypes = _context.Documents.Where(x => x.IsActive && x.Id == id);
 
                 if (docTypes == null)
                 {

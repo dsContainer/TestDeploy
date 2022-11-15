@@ -14,7 +14,6 @@
         public bool IsActive { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }
-        public bool IsDeleted { get; set; }
 
         public virtual ICollection<Document> Documents { get; set; }
         public virtual ICollection<Template> Templates { get; set; }

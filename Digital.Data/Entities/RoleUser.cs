@@ -2,6 +2,7 @@
 {
     public partial class RoleUser
     {
+        public Guid RoleUserId { get; set; }
         public Guid RolesId { get; set; }
         public Guid UsersId { get; set; }
 
