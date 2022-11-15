@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
 using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model;
 using Digital.Infrastructure.Model.DocumentModel;
@@ -86,9 +87,9 @@ namespace DigitalSignature.Controllers
         /// <param name="Id"></param>
         /// <returns></returns>
         [HttpPut("{Id}")]
-        public async Task<IActionResult> Update(DocumentTypeUpdateModel model, Guid Id)
+        public async Task<IActionResult> Update(Guid Id, [FromQuery] DocumentTypeUpdateModel model)
         {
-            var result = await _service.UpdateDocumentType(model, Id);
+            var result = await _service.UpdateDocumentType(Id, model);
             if (result != null)
             {
                 return Ok(result);

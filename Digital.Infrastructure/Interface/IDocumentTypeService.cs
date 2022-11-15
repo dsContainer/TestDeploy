@@ -10,7 +10,7 @@ namespace Digital.Infrastructure.Interface
         Task<ResultModel> GetDocumentTypeById(Guid id);
         Task<ResultModel> CreateDocumentType(DocumentTypeCreateModel model);
         Task<ResultModel> DeleteDocumentType(Guid id);
-        Task<ResultModel> UpdateDocumentType(DocumentTypeUpdateModel model, Guid Id);
+        Task<ResultModel> UpdateDocumentType(Guid Id, DocumentTypeUpdateModel model);
         DocumentType DeletedDocument(Guid id, bool isDeleted);
     }
 }

@@ -22,5 +22,6 @@ namespace Digital.Infrastructure.Interface
         Task<ResultModel> GetDocumentDetail(Guid id);
         Task<ResultModel> DeleteDocument(Guid id);
         Task<ResultModel> UpdateDocument(DocumentUpdateModel model, Guid Id);
+        Task<DocumentResponse> GetContent(Guid id);
     }
 }

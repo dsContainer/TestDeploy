@@ -1,6 +1,8 @@
 ﻿using System.Reflection.Metadata;
 using AutoMapper;
+using Azure;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Digital.Data.Entities;
 using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model;
@@ -11,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage;
+using SendGrid.Helpers.Mail;
 using Document = Digital.Data.Entities.Document;
 
 namespace Digital.Infrastructure.Service
@@ -24,6 +27,7 @@ namespace Digital.Infrastructure.Service
 
         private readonly string _storageConnectionString;
         private readonly string _storageContainerName;
+        private readonly ILogger<AzureBlobStorageService> _logger;
 
         public DocumentService(
             IMapper mapper, DigitalSignatureDBContext context,
@@ -34,6 +38,7 @@ namespace Digital.Infrastructure.Service
             _context = context;
             _mapper = mapper;
             _userContext = userContextService;
+            _logger = logger;
             _storageConnectionString = configuration["BlobConnectionString"];
             _storageContainerName = configuration["BlobContainerName"];
         }
@@ -47,16 +52,7 @@ namespace Digital.Infrastructure.Service
             var transaction = _context.Database.BeginTransaction();
             try
             {
-                BlobClient client = container.GetBlobClient(model.File.FileName);
-                await using (Stream? data = model.File.OpenReadStream())
-                {
-                    // Upload the file async
-                    await client.UploadAsync(data);
-                }
-                response.Status = $"File {model.File.FileName} Uploaded Successfully";
-                response.Error = false;
-                response.Uri = client.Uri.AbsoluteUri;
-                response.Name = client.Name;
+                
                 if (model == null)
                 {
                     result.Code = 400;
@@ -72,6 +68,15 @@ namespace Digital.Infrastructure.Service
                     return result;
                 }
 
+                BlobClient client = container.GetBlobClient(model.File.FileName);
+                await using (Stream? data = model.File.OpenReadStream())
+                {
+                    await client.UploadAsync(data);
+                }
+                response.Status = $"File {model.File.FileName} Uploaded Successfully";
+                response.Error = false;
+                response.Uri = client.Uri.AbsoluteUri;
+                response.Name = client.Name;
                 var ownId = _userContext.UserID.ToString()!;
                 //add Entity
                 var document = new Data.Entities.Document
@@ -85,6 +90,7 @@ namespace Digital.Infrastructure.Service
                     OwnerId = Guid.Parse(ownId),
                     Owner = _context.Users.FirstOrDefault(x => !x.IsDeleted && x.Id == Guid.Parse(ownId))
                 };
+               
 
                 await _context.Documents.AddAsync(document);
                 await _context.SaveChangesAsync();
@@ -213,19 +219,19 @@ namespace Digital.Infrastructure.Service
             var result = new ResultModel();
             try
             {
-                var docTypes = _context.Documents.Where(x => !x.IsDeleted && x.Id == id);
+                var doc = _context.Documents.Where(x => !x.IsDeleted && x.Id == id);
 
-                if (docTypes == null)
+                if (doc == null)
                 {
                     result.Code = 400;
                     result.IsSuccess = false;
-                    result.ResponseSuccess = $"Any DocumentType Not Found!";
+                    result.ResponseSuccess = $"Any Document Not Found!";
                     return result;
                 }
 
                 result.Code = 200;
                 result.IsSuccess = true;
-                result.ResponseSuccess = await _mapper.ProjectTo<DocumentViewModel>(docTypes).FirstOrDefaultAsync();
+                result.ResponseSuccess = await _mapper.ProjectTo<DocumentViewModel>(doc).FirstOrDefaultAsync();
 
             }
             catch (Exception e)
@@ -235,6 +241,38 @@ namespace Digital.Infrastructure.Service
             }
 
             return result;
+        }
+
+
+        public async Task<DocumentResponse> GetContent(Guid id)
+        {
+           
+                var document = await _context.Documents
+                .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+                BlobContainerClient client = new BlobContainerClient(_storageConnectionString, _storageContainerName);
+                try
+            {
+                BlobClient file = client.GetBlobClient(document.FileName);
+
+                if (await file.ExistsAsync())
+                {
+                    var data = await file.OpenReadAsync();
+                    Stream blobContent = data;
+
+                    var content = await file.DownloadContentAsync();
+
+                    string name = document.FileName;
+                    string contentType = content.Value.Details.ContentType;
+                    return new DocumentResponse { Content = blobContent, Name = name, ContentType = contentType };
+                 }
+            }
+            catch (RequestFailedException ex)
+                when (ex.ErrorCode == BlobErrorCode.BlobNotFound)
+            {
+                _logger.LogError($"File {document.FileName} was not found.");
+            }
+               
+            return null;
         }
     }
 }

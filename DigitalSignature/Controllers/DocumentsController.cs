@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 namespace DigitalSignature.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     [ApiController]
     public class DocumentsController : ControllerBase
     {
@@ -89,6 +89,29 @@ namespace DigitalSignature.Controllers
             var result = await _service.GetDocumentDetail( Id);
             if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
             return BadRequest(result);
+        }
+
+
+        /// get a Document detail by Id
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpGet("content/{Id}")]
+        public async Task<IActionResult> GetContent(Guid Id)
+        {
+            DocumentResponse? file = await _service.GetContent(Id);
+
+            // Check if file was found
+            if (file == null)
+            {
+                // Was not, return error message to client
+                return StatusCode(StatusCodes.Status500InternalServerError, $"File {Id} could not be downloaded.");
+            }
+            else
+            {
+                // File was found, return it to client
+                return File(file.Content, file.ContentType, file.Name);
+            }
         }
     }
 }
