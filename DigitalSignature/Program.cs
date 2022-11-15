@@ -25,7 +25,7 @@ builder.Services.AddMvc();
 
 //Database
 builder.Services.AddDbContext<DigitalSignatureDBContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("SignDatabase"), 
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SignDatabase"),
     b => b.MigrationsAssembly("DigitalSignature")));
 
 //Mapper

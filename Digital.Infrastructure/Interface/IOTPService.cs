@@ -1,8 +1,7 @@
-﻿using System;
-namespace Digital.Infrastructure.Interface
+﻿namespace Digital.Infrastructure.Interface
 {
-	public interface IOTPService
-	{
+    public interface IOTPService
+    {
         public Task SendEmailMessage();
         public Task ConfirmCode(string verificationCode);
     }

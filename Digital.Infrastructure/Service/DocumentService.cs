@@ -1,17 +1,12 @@
-﻿using System.Reflection.Metadata;
-using AutoMapper;
+﻿using AutoMapper;
 using Azure.Storage.Blobs;
 using Digital.Data.Entities;
 using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model;
 using Digital.Infrastructure.Model.DocumentModel;
-using Digital.Infrastructure.Model.ProcessModel;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
-using Microsoft.WindowsAzure.Storage;
-using Document = Digital.Data.Entities.Document;
 
 namespace Digital.Infrastructure.Service
 {
