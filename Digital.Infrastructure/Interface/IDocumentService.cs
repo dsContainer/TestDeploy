@@ -1,4 +1,6 @@
-﻿using Digital.Infrastructure.Model;
+﻿using Digital.Data.Enums;
+using Digital.Data.Utilities.Paging.PaginationModel;
+using Digital.Infrastructure.Model;
 using Digital.Infrastructure.Model.DocumentModel;
 
 namespace Digital.Infrastructure.Interface
@@ -16,5 +18,8 @@ namespace Digital.Infrastructure.Interface
         Task<ResultModel> GetDocumentDetail(Guid id);
         Task<ResultModel> DeleteDocument(Guid id);
         Task<ResultModel> UpdateDocument(DocumentUpdateModel model, Guid Id);
+        Task<DocumentResponse> GetContent(Guid id);
+        Task<ResultModel> GetPagingDocument(PagingParam<DocumentSortCriteria> paginationModel);
+        Task<ResultModel> SearchDocbyName(string textSearch);
     }
 }

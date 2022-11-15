@@ -1,4 +1,6 @@
-﻿using Digital.Infrastructure.Interface;
+﻿using Digital.Data.Enums;
+using Digital.Data.Utilities.Paging.PaginationModel;
+using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model.DocumentModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +9,7 @@ using System.ComponentModel.DataAnnotations;
 namespace DigitalSignature.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     [ApiController]
     public class DocumentsController : ControllerBase
     {
@@ -46,6 +48,30 @@ namespace DigitalSignature.Controllers
             return NotFound();
         }
 
+        /// <summary>
+        /// get all Document with paging with Current User
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("Paging")]
+        public async Task<IActionResult> GetPagingDocument([FromQuery]PagingParam<DocumentSortCriteria> paginationModel)
+        {
+            var result = await _service.GetPagingDocument(paginationModel);
+
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
+        }
+        /// <summary>
+        /// search  Document by fileName
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchDocbyName(string textSearch)
+        {
+            var result = await _service.SearchDocbyName(textSearch);
+
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
+        }
 
         /// <summary>
         /// delete doc
@@ -86,6 +112,29 @@ namespace DigitalSignature.Controllers
             var result = await _service.GetDocumentDetail(Id);
             if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
             return BadRequest(result);
+        }
+
+
+        /// get a Document detail by Id
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        [HttpGet("content/{Id}")]
+        public async Task<IActionResult> GetContent(Guid Id)
+        {
+            DocumentResponse? file = await _service.GetContent(Id);
+
+            // Check if file was found
+            if (file == null)
+            {
+                // Was not, return error message to client
+                return StatusCode(StatusCodes.Status500InternalServerError, $"File {Id} could not be downloaded.");
+            }
+            else
+            {
+                // File was found, return it to client
+                return File(file.Content, file.ContentType, file.Name);
+            }
         }
     }
 }

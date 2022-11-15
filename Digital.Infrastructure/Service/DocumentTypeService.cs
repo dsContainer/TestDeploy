@@ -152,7 +152,7 @@ namespace Digital.Infrastructure.Service
         }
 
 
-        public async Task<ResultModel> UpdateDocumentType(DocumentTypeUpdateModel model, Guid Id)
+        public async Task<ResultModel> UpdateDocumentType(Guid Id, DocumentTypeUpdateModel model)
         {
             var result = new ResultModel();
             var transaction = _context.Database.BeginTransaction();
@@ -169,6 +169,7 @@ namespace Digital.Infrastructure.Service
 
                 docType.Name = model.Name;
                 docType.NormalizationName = model.Name.ToUpper();
+                docType.IsDeleted = model.IsActive;
                 _context.DocumentTypes.Update(docType);
                 await _context.SaveChangesAsync();
                 result.IsSuccess = true;

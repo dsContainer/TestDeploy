@@ -11,12 +11,15 @@
     {
         public string Name { get; set; }
         //public bool IsActive { get; set; }
+
     }
 
 
     public class DocumentTypeUpdateModel
     {
         public string? Name { get; set; }
+        public bool IsActive { get; set; }
+
     }
     public class DocumentTypeViewModel : DocumentTypeModel
     {
