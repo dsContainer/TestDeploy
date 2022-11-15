@@ -1,15 +1,9 @@
 ﻿using AutoMapper;
 using Digital.Data.Entities;
 using Digital.Infrastructure.Interface;
-using Digital.Infrastructure.Model.ProcessModel;
 using Digital.Infrastructure.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Digital.Infrastructure.Model.ProcessModel;
 using Microsoft.EntityFrameworkCore;
-using static iTextSharp.text.pdf.AcroFields;
 
 namespace Digital.Infrastructure.Service
 {
@@ -37,13 +31,13 @@ namespace Digital.Infrastructure.Service
                 if (process.TemplateId != null)
                 {
                     var template = await _context.Templates.FindAsync(process.TemplateId);
-                    if(template != null)
+                    if (template != null)
                     {
                         process.Template = template;
                     }
                 }
                 var list = process.ProcessSteps;
-                if(list!= null)
+                if (list != null)
                 {
                     foreach (var item in list)
                     {
@@ -51,7 +45,7 @@ namespace Digital.Infrastructure.Service
                         item.DateCreated = DateTime.Now;
                         item.DateUpdated = DateTime.Now;
                         var user = await _context.Users.FindAsync(item.UserId);
-                        if(user!=null)
+                        if (user != null)
                         {
                             item.User = user;
                         }
@@ -196,7 +190,7 @@ namespace Digital.Infrastructure.Service
                 {
                     var process = _mapper.Map<ProcessViewModel>(item);
                     DocumentType? docType;
-                    if(process.TemplateId == null)
+                    if (process.TemplateId == null)
                     {
                         docType = await _context.DocumentTypes.Where(x => x.Name == "Contract").FirstOrDefaultAsync();
                     }

@@ -1,13 +1,8 @@
 ﻿using AutoMapper;
 using Digital.Data.Entities;
 using Digital.Infrastructure.Interface;
-using Digital.Infrastructure.Model.ProcessModel;
 using Digital.Infrastructure.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Digital.Infrastructure.Model.ProcessModel;
 
 namespace Digital.Infrastructure.Service
 {

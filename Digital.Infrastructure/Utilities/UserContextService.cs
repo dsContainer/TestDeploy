@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 namespace Digital.Infrastructure.Utilities
 {
-  
+
     public class UserContextService : IUserContextService
     {
         private readonly IHttpContextAccessor _contextAccessor;
