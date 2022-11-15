@@ -34,7 +34,7 @@ namespace DigitalSignature.Controllers
         }
 
         /// <summary>
-        /// Upload Template
+        /// Create Template
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>

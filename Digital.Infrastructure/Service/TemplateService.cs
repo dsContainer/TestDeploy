@@ -58,16 +58,33 @@ namespace Digital.Infrastructure.Service
 
                 if (listTemplate.Count != 0)
                 {
-                    var listTemplateResult = _mapper.Map<List<TemplateViewModel>>(listTemplate);
+                    var listTemplateToResult = new List<TemplateViewModel>();
                     foreach (var item in listTemplate)
                     {
-                        var documentType = _context.DocumentTypes.FirstOrDefault(x => x.Id == item.DocumentTypeId);
-
+                        var documentTypeToPaste = _context.DocumentTypes.FirstOrDefault(x => x.Id == item.DocumentTypeId);
+                        var TemplateToResult = new TemplateViewModel
+                        {
+                            id = item.Id,
+                            name = item.Name,
+                            normalizationName = item.NormalizationName,
+                            description = item.Description,
+                            documentType = new DocumentTypeViewModel
+                            {
+                                id = documentTypeToPaste.Id,
+                                name = documentTypeToPaste.Name,
+                                normalizationName = documentTypeToPaste.NormalizationName,
+                                isActive = documentTypeToPaste.IsActive,
+                            },
+                            dateCreated = item.DateCreated,
+                            dateUpdated = item.DateUpdated,
+                            isDeleted= item.IsDeleted
+                        };
+                        listTemplateToResult.Add(TemplateToResult);
                     }
 
                     result.IsSuccess = true;
                     result.Code = 200;
-                    result.ResponseSuccess = _mapper.Map<List<TemplateViewModel>>(listTemplate); 
+                    result.ResponseSuccess = listTemplateToResult; 
                 }
                 else
                 {
@@ -91,12 +108,31 @@ namespace Digital.Infrastructure.Service
             var result = new ResultModel();
             try
             {
-                var templateResult = _context.Templates.FirstOrDefault(x => x.Id == TempalateId);
-                if (templateResult != null)
+                var template = _context.Templates.FirstOrDefault(x => x.Id == TempalateId);
+                if (template != null)
                 {
+                    var documentType = _context.DocumentTypes.FirstOrDefault(x=>x.Id == template.DocumentTypeId);
+                    var templateToResult = new TemplateViewModel
+                    {
+                        id= template.Id,
+                        name=template.Name,
+                        normalizationName=template.NormalizationName,
+                        description=template.Description,
+                        documentType = new DocumentTypeViewModel
+                        {
+                            id = documentType.Id,
+                            name= documentType.Name,
+                            normalizationName = documentType.NormalizationName,
+                            isActive = documentType.IsActive,
+                        },
+                        dateCreated = template.DateCreated,
+                        dateUpdated = template.DateUpdated,
+                        isDeleted= template.IsDeleted
+                    };
+
                     result.IsSuccess = true;
                     result.Code = 200;
-                    result.ResponseSuccess = templateResult;
+                    result.ResponseSuccess = templateToResult;
                 }
                 else
                 {
