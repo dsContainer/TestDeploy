@@ -7,8 +7,6 @@ using Digital.Data.Entities;
 using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model;
 using Digital.Infrastructure.Model.DocumentModel;
-using Digital.Infrastructure.Model.ProcessModel;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;

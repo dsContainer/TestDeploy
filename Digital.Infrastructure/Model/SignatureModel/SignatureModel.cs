@@ -13,4 +13,11 @@ namespace Digital.Infrastructure.Model.SignatureModel
         [Required]
         public SignType Typesignature { get; set; } = SignType.TEXTIMA;
     }
+    public class SignatureViewModel
+    {
+        public Guid Id { get; set; }
+        public DateTime FromDate { get; set; }
+        public DateTime ToDate { get; set; }
+        public bool IsDelete { get; set; }
+    }
 }

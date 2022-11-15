@@ -1,5 +1,4 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using Digital.Data.Entities;
 using Digital.Infrastructure.Interface;
 using Microsoft.AspNetCore.Http;
@@ -10,7 +9,7 @@ using Twilio.Rest.Verify.V2.Service;
 
 namespace Digital.Infrastructure.Service
 {
-	public class OTPService : IOTPService
+    public class OTPService : IOTPService
     {
 
         private readonly DigitalSignatureDBContext _context;
@@ -67,8 +66,9 @@ namespace Digital.Infrastructure.Service
                 var authToken = _configuration["Twilio:AuthToken"];
                 TwilioClient.Init(accountSid, authToken);
                 var userExist = Guid.Parse(_userContext.UserID.ToString()!);
-                if (userExist != null) { 
-                    var emailOtp = await _context.Users.Where(x => x.Id ==  userExist)
+                if (userExist != null)
+                {
+                    var emailOtp = await _context.Users.Where(x => x.Id == userExist)
                         .Select(x => x.Email).FirstOrDefaultAsync();
                     if (!string.IsNullOrEmpty(emailOtp))
                     {

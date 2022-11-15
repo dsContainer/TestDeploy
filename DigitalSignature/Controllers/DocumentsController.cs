@@ -1,11 +1,8 @@
-﻿using System.ComponentModel.DataAnnotations;
-using Digital.Data.Entities;
-using Digital.Infrastructure.Interface;
+﻿using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model.DocumentModel;
-using Digital.Infrastructure.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace DigitalSignature.Controllers
 {
@@ -86,7 +83,7 @@ namespace DigitalSignature.Controllers
         [HttpGet("{Id}")]
         public async Task<IActionResult> GetDocumentDetail(Guid Id)
         {
-            var result = await _service.GetDocumentDetail( Id);
+            var result = await _service.GetDocumentDetail(Id);
             if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
             return BadRequest(result);
         }

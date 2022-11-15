@@ -1,7 +1,6 @@
 ﻿using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model;
 using Digital.Infrastructure.Model.TemplateModel;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DigitalSignature.Controllers
@@ -34,7 +33,7 @@ namespace DigitalSignature.Controllers
         }
 
         /// <summary>
-        /// Upload Template
+        /// Create Template
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
@@ -63,12 +62,29 @@ namespace DigitalSignature.Controllers
             return BadRequest(result);
         }
 
-        
+
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
         [HttpPut("{id}/{isDeleted}")]
         public async Task<IActionResult> ChangeStatus(Guid id, bool isDeleted)
         {
             var result = await _service.ChangeStatus(id, isDeleted);
+
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
+            return BadRequest(result);
+        }
+
+
+
+        /// <summary>
+        /// Update template
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
+        [HttpPut]
+        public async Task<IActionResult> UpdateTemplate(Guid id, [FromForm] TemplateModel model)
+        {
+            var result = await _service.UpdateTemplate(id, model);
 
             if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);

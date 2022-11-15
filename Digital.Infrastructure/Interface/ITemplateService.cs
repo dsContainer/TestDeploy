@@ -9,5 +9,6 @@ namespace Digital.Infrastructure.Interface
         Task<ResultModel> UploadTemplate(TemplateModel model, Guid documentTypeId);
         Task<ResultModel> GetTemplateById(Guid TempalateId);
         Task<ResultModel> ChangeStatus(Guid id, bool isDeleted);
+        Task<ResultModel> UpdateTemplate(Guid id, TemplateModel model);
     }
 }

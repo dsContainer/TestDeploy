@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Digital.Infrastructure.Interface;
+﻿using Digital.Infrastructure.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,8 +20,8 @@ namespace DigitalSignature.Controllers
         [HttpPost]
         public async Task<IActionResult> SendEmail()
         {
-             await _serOTP.SendEmailMessage();
-             return StatusCode(204);
+            await _serOTP.SendEmailMessage();
+            return StatusCode(204);
         }
 
         [HttpPost("confirm")]
@@ -33,8 +29,8 @@ namespace DigitalSignature.Controllers
         {
             if (!string.IsNullOrEmpty(code))
             {
-                    await _serOTP.ConfirmCode(code);
-                    return StatusCode(201);
+                await _serOTP.ConfirmCode(code);
+                return StatusCode(201);
 
             }
             return BadRequest();

@@ -1,4 +1,5 @@
-﻿using Digital.Infrastructure.Interface;
+﻿using Digital.Data.Entities;
+using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model;
 using Digital.Infrastructure.Model.Requests;
 using Microsoft.AspNetCore.Authorization;
@@ -8,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DigitalSignature.Controllers
 {
     [Route("api/[controller]")]
-    //[Authorize]
+    [Authorize]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -88,6 +89,32 @@ namespace DigitalSignature.Controllers
             try
             {
                 var user = _userService.DeletedUser(id, isDeleted);
+
+                if (user == null) return await Task.FromResult(StatusCode(StatusCodes.Status404NotFound, new ResultModel() { IsSuccess = true, Code = StatusCodes.Status404NotFound, ResponseFailed = "Not found User" }));
+
+                return await Task.FromResult(StatusCode(StatusCodes.Status200OK, new ResultModel() { IsSuccess = true, Code = StatusCodes.Status200OK, ResponseSuccess = user }));
+            }
+            catch (Exception ex)
+            {
+                return await Task.FromResult(StatusCode(StatusCodes.Status400BadRequest, new ResultModel() { IsSuccess = false, Code = StatusCodes.Status400BadRequest, ResponseFailed = ex.Message }));
+            }
+        }
+
+        [HttpGet("Token")]
+        public async Task<ActionResult> GetUserByToken()
+        {
+            try
+            {
+                User user = null;
+
+                var currentUser = HttpContext.User;
+
+                if (currentUser.FindFirst("UserId") != null)
+                {
+                    string userId = currentUser.FindFirst("UserId")?.Value;
+
+                    user = _userService.GetUser(new Guid(userId));
+                }
 
                 if (user == null) return await Task.FromResult(StatusCode(StatusCodes.Status404NotFound, new ResultModel() { IsSuccess = true, Code = StatusCodes.Status404NotFound, ResponseFailed = "Not found User" }));
 

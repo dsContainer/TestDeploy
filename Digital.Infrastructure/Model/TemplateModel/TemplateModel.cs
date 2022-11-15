@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
-using Digital.Data.Entities;
 
 namespace Digital.Infrastructure.Model.TemplateModel
 {
@@ -23,7 +22,7 @@ namespace Digital.Infrastructure.Model.TemplateModel
     }
     public class TemplateViewModel
     {
-        public Guid id { get; set; }    
+        public Guid id { get; set; }
         public string name { get; set; }
         public string normalizationName { get; set; }
         public string? description { get; set; }
@@ -34,5 +33,6 @@ namespace Digital.Infrastructure.Model.TemplateModel
 
 
     }
+
 
 }

@@ -3,9 +3,9 @@ using System.Runtime.InteropServices;
 using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model;
 using Digital.Infrastructure.Model.DocumentModel;
-using Digital.Infrastructure.Service;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace DigitalSignature.Controllers
 {
