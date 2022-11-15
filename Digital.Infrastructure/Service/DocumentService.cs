@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.WindowsAzure.Storage;
 using SendGrid.Helpers.Mail;
+using static System.Reflection.Metadata.BlobBuilder;
 using Document = Digital.Data.Entities.Document;
 
 namespace Digital.Infrastructure.Service
@@ -97,6 +98,14 @@ namespace Digital.Infrastructure.Service
                 result.IsSuccess = true;
                 result.ResponseSuccess = _mapper.Map<DocumentViewModel>(document);
             }
+            catch (RequestFailedException ex)
+               when (ex.ErrorCode == BlobErrorCode.BlobAlreadyExists)
+            {
+                await transaction.RollbackAsync();
+                _logger.LogError($"File with name {model.File.FileName} already exists in container. Set another name to store the file in the container: '{_storageContainerName}.'");
+                response.Status = $"File with name {model.File.FileName} already exists. Please use another name to store your file.";
+                response.Error = true;
+            }
             catch (Exception e)
             {
 
@@ -106,6 +115,7 @@ namespace Digital.Infrastructure.Service
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
 
             }
+            
 
             await transaction.CommitAsync();
             return result;
