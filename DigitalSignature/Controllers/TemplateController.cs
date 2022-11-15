@@ -1,7 +1,6 @@
 ﻿using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model;
 using Digital.Infrastructure.Model.TemplateModel;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DigitalSignature.Controllers
@@ -63,7 +62,7 @@ namespace DigitalSignature.Controllers
             return BadRequest(result);
         }
 
-        
+
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
         [HttpPut("{id}/{isDeleted}")]
         public async Task<IActionResult> ChangeStatus(Guid id, bool isDeleted)
