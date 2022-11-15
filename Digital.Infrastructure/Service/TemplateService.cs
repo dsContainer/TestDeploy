@@ -36,6 +36,8 @@ namespace Digital.Infrastructure.Service
                    templateToDo.IsDeleted = isDeleted;
                    _context.Templates.Update(templateToDo);
                    await _context.SaveChangesAsync();
+                    result.IsSuccess = true;
+                    result.Code = 200;
                 }
             }
             catch (Exception e)
