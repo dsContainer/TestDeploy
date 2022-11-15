@@ -33,9 +33,9 @@ namespace Digital.Infrastructure.Service
                 }
                 else
                 {
-                   templateToDo.IsDeleted = isDeleted;
-                   _context.Templates.Update(templateToDo);
-                   await _context.SaveChangesAsync();
+                    templateToDo.IsDeleted = isDeleted;
+                    _context.Templates.Update(templateToDo);
+                    await _context.SaveChangesAsync();
                 }
             }
             catch (Exception e)
@@ -67,7 +67,7 @@ namespace Digital.Infrastructure.Service
 
                     result.IsSuccess = true;
                     result.Code = 200;
-                    result.ResponseSuccess = _mapper.Map<List<TemplateViewModel>>(listTemplate); 
+                    result.ResponseSuccess = _mapper.Map<List<TemplateViewModel>>(listTemplate);
                 }
                 else
                 {

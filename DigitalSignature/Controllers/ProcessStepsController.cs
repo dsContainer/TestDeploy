@@ -1,9 +1,7 @@
-﻿using Digital.Data.Entities;
-using Digital.Infrastructure.Interface;
+﻿using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model.ProcessModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace DigitalSignature.Controllers
 {
@@ -69,5 +67,5 @@ namespace DigitalSignature.Controllers
             return NotFound();
         }
     }
-    
+
 }
