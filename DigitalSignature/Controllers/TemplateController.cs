@@ -39,7 +39,7 @@ namespace DigitalSignature.Controllers
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
         [HttpPost("Template")]
-        public async Task<IActionResult> UploadTemplate([FromForm] TemplateModel model, Guid documentTypeId)
+        public async Task<IActionResult> UploadTemplate([FromForm] TemplateCreateModel model, Guid documentTypeId)
         {
             var result = await _service.UploadTemplate(model, documentTypeId);
 

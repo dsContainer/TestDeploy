@@ -30,9 +30,13 @@ namespace Digital.Infrastructure.Model.TemplateModel
         public DateTime? dateCreated { get; set; }
         public DateTime? dateUpdated { get; set; }
         public bool? isDeleted { get; set; }
-
-
     }
 
+
+    public class TemplateCreateModel
+    {
+        public string? description { get; set; }
+        public IFormFile? templateFile { get; set; }
+    }
 
 }

@@ -1,9 +1,13 @@
-﻿using AutoMapper;
+﻿using System.ComponentModel;
+using AutoMapper;
+using Azure.Storage.Blobs;
 using Digital.Data.Entities;
 using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model;
+using Digital.Infrastructure.Model.DocumentModel;
 using Digital.Infrastructure.Model.TemplateModel;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 
 namespace Digital.Infrastructure.Service
 {
@@ -11,12 +15,17 @@ namespace Digital.Infrastructure.Service
     {
         private readonly DigitalSignatureDBContext _context;
         private readonly IMapper _mapper;
+        private readonly string _storageConnectionString;
+        private readonly string _storageContainerName;
         public TemplateService(
             IMapper mapper,
+            IConfiguration configuration,
             DigitalSignatureDBContext context)
         {
             _context = context;
             _mapper = mapper;
+            _storageConnectionString = configuration["BlobConnectionString"];
+            _storageContainerName = configuration["BlobContainerName"];
         }
 
         public async Task<ResultModel> ChangeStatus(Guid id, bool isDeleted)
@@ -70,7 +79,7 @@ namespace Digital.Infrastructure.Service
                             name = item.Name,
                             normalizationName = item.NormalizationName,
                             description = item.Description,
-                            documentType = new DocumentTypeViewModel
+                            documentType = new Model.TemplateModel.DocumentTypeViewModel
                             {
                                 id = documentTypeToPaste.Id,
                                 name = documentTypeToPaste.Name,
@@ -120,7 +129,7 @@ namespace Digital.Infrastructure.Service
                         name=template.Name,
                         normalizationName=template.NormalizationName,
                         description=template.Description,
-                        documentType = new DocumentTypeViewModel
+                        documentType = new Model.TemplateModel.DocumentTypeViewModel
                         {
                             id = documentType.Id,
                             name= documentType.Name,
@@ -185,11 +194,14 @@ namespace Digital.Infrastructure.Service
             return result;
         }
 
-        public async Task<ResultModel> UploadTemplate(TemplateModel model, Guid documentTypeId)
+        public async Task<ResultModel> UploadTemplate(TemplateCreateModel model, Guid documentTypeId)
         {
             var result = new ResultModel();
             try
             {
+                DocumentResponse response = new();
+                BlobContainerClient container = new BlobContainerClient(_storageConnectionString, _storageContainerName);
+                await container.CreateIfNotExistsAsync();
                 var doccumentType = _context.DocumentTypes.FirstOrDefault(x => x.Id == documentTypeId);
                 if (doccumentType == null)
                 {
@@ -199,11 +211,21 @@ namespace Digital.Infrastructure.Service
                 }
                 else
                 {
+
+                    BlobClient client = container.GetBlobClient(model.templateFile.FileName);
+                    await using (Stream? data = model.templateFile.OpenReadStream())
+                    {
+                        await client.UploadAsync(data);
+                    }
+                    response.Status = $"File {model.templateFile.FileName} Uploaded Successfully";
+                    response.Error = false;
+                    response.Uri = client.Uri.AbsoluteUri;
+                    response.Name = client.Name;
                     var newTemplate = new Template
                     {
                         Id = Guid.NewGuid(),
-                        Name = model.name,
-                        NormalizationName = model.name.ToUpperInvariant(),
+                        Name = response.Name,
+                        NormalizationName = response.Name.ToUpperInvariant(),
                         Description = model.description,
                         DocumentTypeId = documentTypeId,
                     };
