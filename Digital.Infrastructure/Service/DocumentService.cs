@@ -48,10 +48,11 @@ namespace Digital.Infrastructure.Service
             BlobContainerClient container = new BlobContainerClient(_storageConnectionString, _storageContainerName);
             await container.CreateIfNotExistsAsync();
             var transaction = _context.Database.BeginTransaction();
+            BlobClient client = container.GetBlobClient(model.File.FileName);
             try
             {
                 
-                if (model == null)
+                if (response == null)
                 {
                     result.Code = 400;
                     result.IsSuccess = false;
@@ -66,7 +67,7 @@ namespace Digital.Infrastructure.Service
                     return result;
                 }
 
-                BlobClient client = container.GetBlobClient(model.File.FileName);
+               
                 await using (Stream? data = model.File.OpenReadStream())
                 {
                     await client.UploadAsync(data);
@@ -92,14 +93,15 @@ namespace Digital.Infrastructure.Service
 
                 await _context.Documents.AddAsync(document);
                 await _context.SaveChangesAsync();
-
                 result.Code = 200;
                 result.IsSuccess = true;
                 result.ResponseSuccess = _mapper.Map<DocumentViewModel>(document);
             }
             catch (Exception e)
             {
+
                 await transaction.RollbackAsync();
+                await client.DeleteAsync();
                 result.IsSuccess = false;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
 

@@ -197,11 +197,14 @@ namespace Digital.Infrastructure.Service
         public async Task<ResultModel> UploadTemplate(TemplateCreateModel model, Guid documentTypeId)
         {
             var result = new ResultModel();
+            var transaction = _context.Database.BeginTransaction();
+            DocumentResponse response = new();
+            BlobContainerClient container = new BlobContainerClient(_storageConnectionString, _storageContainerName);
+            await container.CreateIfNotExistsAsync();
+            BlobClient client = container.GetBlobClient(model.templateFile.FileName);
             try
             {
-                DocumentResponse response = new();
-                BlobContainerClient container = new BlobContainerClient(_storageConnectionString, _storageContainerName);
-                await container.CreateIfNotExistsAsync();
+               
                 var doccumentType = _context.DocumentTypes.FirstOrDefault(x => x.Id == documentTypeId);
                 if (doccumentType == null)
                 {
@@ -212,7 +215,6 @@ namespace Digital.Infrastructure.Service
                 else
                 {
 
-                    BlobClient client = container.GetBlobClient(model.templateFile.FileName);
                     await using (Stream? data = model.templateFile.OpenReadStream())
                     {
                         await client.UploadAsync(data);
@@ -237,6 +239,8 @@ namespace Digital.Infrastructure.Service
             }
             catch (Exception e)
             {
+                await transaction.RollbackAsync();
+                await client.DeleteAsync();
                 result.IsSuccess = false;
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
