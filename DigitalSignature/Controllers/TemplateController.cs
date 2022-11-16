@@ -2,6 +2,7 @@
 using Digital.Infrastructure.Model;
 using Digital.Infrastructure.Model.TemplateModel;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace DigitalSignature.Controllers
 {
@@ -90,6 +91,18 @@ namespace DigitalSignature.Controllers
             return BadRequest(result);
         }
 
+        /// <summary>
+        /// delete tmp
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        public async Task<IActionResult> DeleteTemp([Required] Guid id)
+        {
+            var result = await _service.DeleteTemplate(id);
 
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
+            return BadRequest(result);
+        }
     }
 }

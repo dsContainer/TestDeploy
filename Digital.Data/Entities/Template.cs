@@ -9,7 +9,7 @@
         public Guid DocumentTypeId { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateUpdated { get; set; }
-        public string? ImgUrl { get; set; } // example certificate
+        public string ImgUrl { get; set; } // example certificate
         public string ExlUrl { get; set; } // excel data
         public bool IsActive { get; set; }
 

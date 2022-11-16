@@ -16,6 +16,8 @@ namespace Digital.Infrastructure.Service
         private readonly IMapper _mapper;
         private readonly string _storageConnectionString;
         private readonly string _storageContainerName;
+        private readonly string _storageContainerNameImage;
+
         public TemplateService(
             IMapper mapper,
             IConfiguration configuration,
@@ -25,6 +27,7 @@ namespace Digital.Infrastructure.Service
             _mapper = mapper;
             _storageConnectionString = configuration["BlobConnectionString"];
             _storageContainerName = configuration["BlobContainerName"];
+            _storageContainerNameImage = configuration["BlobContainerNameImage"];
         }
 
         public async Task<ResultModel> ChangeStatus(Guid id, bool isDeleted)
@@ -78,16 +81,18 @@ namespace Digital.Infrastructure.Service
                             name = item.Name,
                             normalizationName = item.NormalizationName,
                             description = item.Description,
+                            imgUrl = item.ImgUrl,
+                            ExlUrl = item.ExlUrl,
                             documentType = new Model.TemplateModel.DocumentTypeViewModel
                             {
                                 id = documentTypeToPaste.Id,
                                 name = documentTypeToPaste.Name,
                                 normalizationName = documentTypeToPaste.NormalizationName,
-                                isActive = documentTypeToPaste.IsActive,
+                                IsActive = documentTypeToPaste.IsActive,
                             },
                             dateCreated = item.DateCreated,
                             dateUpdated = item.DateUpdated,
-                            isDeleted = item.IsActive
+                            IsActive = item.IsActive
                         };
                         listTemplateToResult.Add(TemplateToResult);
                     }
@@ -133,11 +138,11 @@ namespace Digital.Infrastructure.Service
                             id = documentType.Id,
                             name = documentType.Name,
                             normalizationName = documentType.NormalizationName,
-                            isActive = documentType.IsActive,
+                            IsActive = documentType.IsActive,
                         },
                         dateCreated = template.DateCreated,
                         dateUpdated = template.DateUpdated,
-                        isDeleted = template.IsActive
+                        IsActive = template.IsActive
                     };
 
                     result.IsSuccess = true;
@@ -196,10 +201,13 @@ namespace Digital.Infrastructure.Service
         public async Task<ResultModel> UploadTemplate(TemplateCreateModel model, Guid documentTypeId)
         {
             var result = new ResultModel();
-            DocumentResponse response = new();
+            TemplateResponse response = new();
             BlobContainerClient container = new BlobContainerClient(_storageConnectionString, _storageContainerName);
+            BlobContainerClient container1 = new BlobContainerClient(_storageConnectionString, _storageContainerNameImage);
             await container.CreateIfNotExistsAsync();
             BlobClient client = container.GetBlobClient(model.templateFile.FileName);
+            BlobClient client1 = container1.GetBlobClient(model.jpg.FileName);
+
             try
             {
 
@@ -212,20 +220,27 @@ namespace Digital.Infrastructure.Service
                 }
                 else
                 {
-
-                    await using (Stream? data = model.templateFile.OpenReadStream())
+                    await using (Stream? data1 = model.jpg.OpenReadStream())
                     {
+                        await client1.UploadAsync(data1);
+                    }
+                    await using (Stream? data = model.templateFile.OpenReadStream())
+                    {   
                         await client.UploadAsync(data);
                     }
                     response.Status = $"File {model.templateFile.FileName} Uploaded Successfully";
                     response.Error = false;
                     response.Uri = client.Uri.AbsoluteUri;
+                    response.UriImage = client1.Uri.AbsoluteUri;
                     response.Name = client.Name;
+
                     var newTemplate = new Template
                     {
                         Id = Guid.NewGuid(),
                         Name = response.Name,
                         NormalizationName = response.Name.ToUpperInvariant(),
+                        ImgUrl = response.UriImage,
+                        ExlUrl = response.Uri,
                         Description = model.description,
                         DocumentTypeId = documentTypeId,
                     };
@@ -242,6 +257,47 @@ namespace Digital.Infrastructure.Service
                 result.Code = 400;
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
             }
+            return result;
+        }
+
+
+        public async Task<ResultModel> DeleteTemplate(Guid id)
+        {
+            var result = new ResultModel();
+            var transaction = _context.Database.BeginTransaction();
+            try
+            {
+                BlobContainerClient client = new BlobContainerClient(_storageConnectionString, _storageContainerName);
+                BlobContainerClient client1 = new BlobContainerClient(_storageConnectionString, _storageContainerNameImage);
+                var tmp = await _context.Templates.FirstOrDefaultAsync(x => x.Id == id);
+                string filename = Path.GetFileName(new Uri(tmp.ImgUrl).AbsolutePath);
+                BlobClient file = client.GetBlobClient(tmp.Name);
+                BlobClient file1 = client1.GetBlobClient(filename);
+
+                if (tmp == null)
+                {
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.ResponseFailed = $"Doc with id: {id} not existed!!";
+                    return result;
+                }
+                await file.DeleteAsync();
+                await file1.DeleteAsync();
+                _context.Templates.Remove(tmp);
+                await _context.SaveChangesAsync();
+
+                result.Code = 200;
+                result.ResponseSuccess = "Okie Br";
+                result.IsSuccess = true;
+            }
+            catch (Exception e)
+            {
+                await transaction.RollbackAsync();
+                result.IsSuccess = false;
+                result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
+            }
+
+            await transaction.CommitAsync();
             return result;
         }
     }

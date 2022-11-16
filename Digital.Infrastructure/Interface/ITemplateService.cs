@@ -10,5 +10,6 @@ namespace Digital.Infrastructure.Interface
         Task<ResultModel> GetTemplateById(Guid TempalateId);
         Task<ResultModel> ChangeStatus(Guid id, bool isDeleted);
         Task<ResultModel> UpdateTemplate(Guid id, TemplateModel model);
+        Task<ResultModel> DeleteTemplate(Guid id);
     }
 }
