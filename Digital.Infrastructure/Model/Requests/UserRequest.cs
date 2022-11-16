@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace Digital.Infrastructure.Model.Requests
 {
@@ -20,13 +21,13 @@ namespace Digital.Infrastructure.Model.Requests
         public string FullName { get; set; }
 
         [Required]
-        public bool IsDeleted { get; set; }
+        public bool IsActive { get; set; }
 
         [Required]
         public List<Guid> RoleIds { get; set; }
 
         [Required]
-        public Guid SigId { get; set; }
+        public IFormFile Image { get; set; }
     }
 
     public class UserCreateRequest : UserRequest

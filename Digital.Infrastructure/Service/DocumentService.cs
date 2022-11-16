@@ -50,7 +50,7 @@ namespace Digital.Infrastructure.Service
             BlobClient client = container.GetBlobClient(model.File.FileName);
             try
             {
-                
+
                 if (response == null)
                 {
                     result.Code = 400;
@@ -66,7 +66,7 @@ namespace Digital.Infrastructure.Service
                     return result;
                 }
 
-               
+
                 await using (Stream? data = model.File.OpenReadStream())
                 {
                     await client.UploadAsync(data);
@@ -89,7 +89,7 @@ namespace Digital.Infrastructure.Service
                     OwnerId = Guid.Parse(ownId),
                     Owner = _context.Users.FirstOrDefault(x => x.Id == Guid.Parse(ownId))
                 };
-               
+
 
                 await _context.Documents.AddAsync(document);
                 await _context.SaveChangesAsync();
@@ -116,7 +116,7 @@ namespace Digital.Infrastructure.Service
                 result.ResponseFailed = e.InnerException != null ? e.InnerException.Message + "\n" + e.StackTrace : e.Message + "\n" + e.StackTrace;
 
             }
-            
+
 
             await transaction.CommitAsync();
             return result;
@@ -229,7 +229,7 @@ namespace Digital.Infrastructure.Service
         {
             var result = new ResultModel();
             try
-            {   
+            {
                 var doc = _context.Documents.Where(x => x.Id == id);
 
                 if (doc == null)
@@ -257,11 +257,11 @@ namespace Digital.Infrastructure.Service
 
         public async Task<DocumentResponse> GetContent(Guid id)
         {
-           
-                var document = await _context.Documents
-                .FirstOrDefaultAsync(x => x.Id == id);
-                BlobContainerClient client = new BlobContainerClient(_storageConnectionString, _storageContainerName);
-                try
+
+            var document = await _context.Documents
+            .FirstOrDefaultAsync(x => x.Id == id);
+            BlobContainerClient client = new BlobContainerClient(_storageConnectionString, _storageContainerName);
+            try
             {
                 BlobClient file = client.GetBlobClient(document.FileName);
 
@@ -275,14 +275,14 @@ namespace Digital.Infrastructure.Service
                     string name = document.FileName;
                     string contentType = content.Value.Details.ContentType;
                     return new DocumentResponse { Content = blobContent, Name = name, ContentType = contentType };
-                 }
+                }
             }
             catch (RequestFailedException ex)
                 when (ex.ErrorCode == BlobErrorCode.BlobNotFound)
             {
                 _logger.LogError($"File {document.FileName} was not found.");
             }
-               
+
             return null;
         }
 
@@ -293,7 +293,7 @@ namespace Digital.Infrastructure.Service
             try
             {
                 var documents = _context.Documents
-                    .Where(x =>x.OwnerId == _userContext.UserID);
+                    .Where(x => x.OwnerId == _userContext.UserID);
 
                 if (documents == null || documents.Count() < 0)
                 {

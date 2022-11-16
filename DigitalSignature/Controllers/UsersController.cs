@@ -52,7 +52,7 @@ namespace DigitalSignature.Controllers
         }
 
         [HttpPost()]
-        public async Task<ActionResult> PostUser([FromBody] UserCreateRequest userRequest)
+        public async Task<ActionResult> PostUser([FromForm] UserCreateRequest userRequest)
         {
             try
             {
@@ -67,7 +67,7 @@ namespace DigitalSignature.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> PutUser(Guid id, [FromBody] UserRequest userRequest)
+        public async Task<ActionResult> PutUser(Guid id, [FromForm] UserRequest userRequest)
         {
             try
             {
@@ -83,12 +83,12 @@ namespace DigitalSignature.Controllers
             }
         }
 
-        [HttpPut("{id}/{isDeleted}")]
-        public async Task<ActionResult> PutDeletedUser(Guid id, bool isDeleted)
+        [HttpPut("{id}/{isActive}")]
+        public async Task<ActionResult> PutDeletedUser(Guid id, bool isActive)
         {
             try
             {
-                var user = _userService.DeletedUser(id, isDeleted);
+                var user = _userService.DeletedUser(id, isActive);
 
                 if (user == null) return await Task.FromResult(StatusCode(StatusCodes.Status404NotFound, new ResultModel() { IsSuccess = true, Code = StatusCodes.Status404NotFound, ResponseFailed = "Not found User" }));
 
