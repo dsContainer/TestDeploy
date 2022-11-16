@@ -83,10 +83,11 @@ namespace Digital.Infrastructure.Service
                     Description = model!.Description,
                     FileName = response.Name,
                     FileExtension = response.Name.Split(".").Last(),
+                    IsActive = true,
                     DocumentTypeId = model.DocumentTypeId,
                     ProcessId = model.ProcessId,
                     OwnerId = Guid.Parse(ownId),
-                    Owner = _context.Users.FirstOrDefault(x => x.IsActive && x.Id == Guid.Parse(ownId))
+                    Owner = _context.Users.FirstOrDefault(x => !x.IsActive && x.Id == Guid.Parse(ownId))
                 };
                
 
@@ -127,7 +128,7 @@ namespace Digital.Infrastructure.Service
             var result = new ResultModel();
             try
             {
-                var doc = _context.Documents.Where(x => x.IsActive);
+                var doc = _context.Documents.Where(x => !x.IsActive);
 
                 if (doc == null)
                 {

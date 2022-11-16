@@ -38,6 +38,7 @@ namespace Digital.Infrastructure.Service
                 documentType = _mapper.Map<DocumentType>(model);
                 documentType.Id = Guid.NewGuid();
                 documentType.NormalizationName = model.Name.ToUpper();
+                documentType.IsActive = true;
 
                 await _context.DocumentTypes.AddAsync(documentType);
                 await _context.SaveChangesAsync();
@@ -127,7 +128,7 @@ namespace Digital.Infrastructure.Service
             var result = new ResultModel();
             try
             {
-                var docTypes = _context.DocumentTypes.Where(x => x.IsActive);
+                var docTypes = _context.DocumentTypes.Where(x => !x.IsActive);
 
                 if (docTypes == null)
                 {
@@ -187,14 +188,14 @@ namespace Digital.Infrastructure.Service
             return result;
         }
 
-        public DocumentType DeletedDocument(Guid id, bool isDeleted)
+        public DocumentType DeletedDocument(Guid id, bool IsActive)
         {
             var documentType = _context.DocumentTypes.Find(id);
 
             if (documentType != null)
             {
                 documentType.DateUpdated = DateTime.Now;
-                documentType.IsActive = isDeleted;
+                documentType.IsActive = IsActive;
 
                 _context.DocumentTypes.Update(documentType);
 

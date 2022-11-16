@@ -10,7 +10,7 @@ using System.ComponentModel.DataAnnotations;
 namespace DigitalSignature.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     [ApiController]
     public class DocumentTypesController : ControllerBase
     {
@@ -31,7 +31,7 @@ namespace DigitalSignature.Controllers
         {
             var result = await _service.CreateDocumentType(model);
 
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
 
@@ -43,12 +43,10 @@ namespace DigitalSignature.Controllers
         [HttpGet("{Id}")]
         public async Task<IActionResult> GetDocumentTypeById(Guid Id)
         {
-            if (Id != null)
-            {
-                var result = await _service.GetDocumentTypeById(Id);
-                return Ok(result);
-            }
-            return NotFound();
+            var result = await _service.GetDocumentTypeById(Id);
+
+            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            return BadRequest(result);
         }
 
         /// <summary>
@@ -59,11 +57,9 @@ namespace DigitalSignature.Controllers
         public async Task<IActionResult> GetDocumentTypes()
         {
             var result = await _service.GetDocumentTypes();
-            if (result != null)
-            {
-                return Ok(result);
-            }
-            return NotFound();
+
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
+            return BadRequest(result);
         }
 
         /// <summary>
@@ -76,7 +72,7 @@ namespace DigitalSignature.Controllers
         {
             var result = await _service.DeleteDocumentType(id);
 
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
 
@@ -90,19 +86,18 @@ namespace DigitalSignature.Controllers
         public async Task<IActionResult> Update(Guid Id, [FromQuery] DocumentTypeUpdateModel model)
         {
             var result = await _service.UpdateDocumentType(Id, model);
-            if (result != null)
-            {
-                return Ok(result);
-            }
-            return NotFound();
+
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
+            return BadRequest(result);
         }
 
-        [HttpPut("{id}/{isDeleted}")]
-        public async Task<ActionResult> PutDeletedDocument(Guid id, bool isDeleted)
+        [HttpPut("{id}/{isActive}")]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ResultModel))]
+        public async Task<ActionResult> PutDeletedDocument(Guid id, bool isActive)
         {
             try
             {
-                var data = _service.DeletedDocument(id, isDeleted);
+                var data = _service.DeletedDocument(id, isActive);
 
                 if (data == null) return await Task.FromResult(StatusCode(StatusCodes.Status404NotFound, new ResultModel() { IsSuccess = true, Code = StatusCodes.Status404NotFound, ResponseFailed = "Not found Document" }));
 

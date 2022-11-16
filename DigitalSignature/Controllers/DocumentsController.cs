@@ -29,7 +29,7 @@ namespace DigitalSignature.Controllers
         public async Task<IActionResult> CreateDoccument([FromForm] DocumentUploadApiRequest model)
         {
             var result = await _service.CreateAsync(model);
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
 
@@ -57,7 +57,7 @@ namespace DigitalSignature.Controllers
         {
             var result = await _service.GetPagingDocument(paginationModel);
 
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
         /// <summary>
@@ -69,7 +69,7 @@ namespace DigitalSignature.Controllers
         {
             var result = await _service.SearchDocbyName(textSearch);
 
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
 
@@ -83,7 +83,7 @@ namespace DigitalSignature.Controllers
         {
             var result = await _service.DeleteDocument(id);
 
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
 
@@ -93,11 +93,12 @@ namespace DigitalSignature.Controllers
         /// <param name="Id"></param>
         /// <returns></returns>
         [HttpPut("{Id}")]
+
         public async Task<IActionResult> UpdateDoc(DocumentUpdateModel model, Guid Id)
         {
             var result = await _service.UpdateDocument(model, Id);
 
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
 
@@ -110,7 +111,7 @@ namespace DigitalSignature.Controllers
         public async Task<IActionResult> GetDocumentDetail(Guid Id)
         {
             var result = await _service.GetDocumentDetail(Id);
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
 
