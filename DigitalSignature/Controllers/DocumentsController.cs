@@ -2,7 +2,6 @@
 using Digital.Data.Utilities.Paging.PaginationModel;
 using Digital.Infrastructure.Interface;
 using Digital.Infrastructure.Model.DocumentModel;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 
@@ -53,7 +52,7 @@ namespace DigitalSignature.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("Paging")]
-        public async Task<IActionResult> GetPagingDocument([FromQuery]PagingParam<DocumentSortCriteria> paginationModel)
+        public async Task<IActionResult> GetPagingDocument([FromQuery] PagingParam<DocumentSortCriteria> paginationModel)
         {
             var result = await _service.GetPagingDocument(paginationModel);
 

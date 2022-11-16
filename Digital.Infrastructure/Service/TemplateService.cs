@@ -1,5 +1,4 @@
-﻿using System.ComponentModel;
-using AutoMapper;
+﻿using AutoMapper;
 using Azure.Storage.Blobs;
 using Digital.Data.Entities;
 using Digital.Infrastructure.Interface;
@@ -42,9 +41,9 @@ namespace Digital.Infrastructure.Service
                 }
                 else
                 {
-                   templateToDo.IsActive = isDeleted;
-                   _context.Templates.Update(templateToDo);
-                   await _context.SaveChangesAsync();
+                    templateToDo.IsActive = isDeleted;
+                    _context.Templates.Update(templateToDo);
+                    await _context.SaveChangesAsync();
                     result.IsSuccess = true;
                     result.Code = 200;
                 }
@@ -88,14 +87,14 @@ namespace Digital.Infrastructure.Service
                             },
                             dateCreated = item.DateCreated,
                             dateUpdated = item.DateUpdated,
-                            isDeleted= item.IsActive
+                            isDeleted = item.IsActive
                         };
                         listTemplateToResult.Add(TemplateToResult);
                     }
 
                     result.IsSuccess = true;
                     result.Code = 200;
-                    result.ResponseSuccess = listTemplateToResult; 
+                    result.ResponseSuccess = listTemplateToResult;
                 }
                 else
                 {
@@ -122,23 +121,23 @@ namespace Digital.Infrastructure.Service
                 var template = _context.Templates.FirstOrDefault(x => x.Id == TempalateId);
                 if (template != null)
                 {
-                    var documentType = _context.DocumentTypes.FirstOrDefault(x=>x.Id == template.DocumentTypeId);
+                    var documentType = _context.DocumentTypes.FirstOrDefault(x => x.Id == template.DocumentTypeId);
                     var templateToResult = new TemplateViewModel
                     {
-                        id= template.Id,
-                        name=template.Name,
-                        normalizationName=template.NormalizationName,
-                        description=template.Description,
+                        id = template.Id,
+                        name = template.Name,
+                        normalizationName = template.NormalizationName,
+                        description = template.Description,
                         documentType = new Model.TemplateModel.DocumentTypeViewModel
                         {
                             id = documentType.Id,
-                            name= documentType.Name,
+                            name = documentType.Name,
                             normalizationName = documentType.NormalizationName,
                             isActive = documentType.IsActive,
                         },
                         dateCreated = template.DateCreated,
                         dateUpdated = template.DateUpdated,
-                        isDeleted= template.IsActive
+                        isDeleted = template.IsActive
                     };
 
                     result.IsSuccess = true;
@@ -166,7 +165,7 @@ namespace Digital.Infrastructure.Service
             var result = new ResultModel();
             try
             {
-                var templateTpUpdate = _context.Templates.FirstOrDefault(x => x.Id== id);
+                var templateTpUpdate = _context.Templates.FirstOrDefault(x => x.Id == id);
                 if (templateTpUpdate == null)
                 {
                     result.IsSuccess = false;
@@ -203,7 +202,7 @@ namespace Digital.Infrastructure.Service
             BlobClient client = container.GetBlobClient(model.templateFile.FileName);
             try
             {
-               
+
                 var doccumentType = _context.DocumentTypes.FirstOrDefault(x => x.Id == documentTypeId);
                 if (doccumentType == null)
                 {
