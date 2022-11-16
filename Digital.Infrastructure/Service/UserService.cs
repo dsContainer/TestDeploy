@@ -64,7 +64,7 @@ namespace Digital.Infrastructure.Service
                     Username = user.Username,
                     FullName = user.FullName,
                     Password = user.Password,
-                    IsDeleted = user.IsActive,
+                    IsActive = user.IsActive,
                     Signature = listSigantureResult,
                     ListRole = listRoleResult,
                 };

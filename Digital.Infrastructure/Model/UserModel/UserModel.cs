@@ -15,7 +15,7 @@ namespace Digital.Infrastructure.Model.UserModel
         public string Username { get; set; }//
         public string FullName { get; set; }//
         public string Password { get; set; }//
-        public bool IsDeleted { get; set; } //
+        public bool IsActive { get; set; } //
         public List<SignatureViewModel> Signature { get; set; } //
         public List<ListRoleViewModel> ListRole { get; set; }
     }
