@@ -51,7 +51,7 @@ namespace Digital.Infrastructure.Service
             try
             {
 
-                if (response == null)
+                if (model == null)
                 {
                     result.Code = 400;
                     result.IsSuccess = false;

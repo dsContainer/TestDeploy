@@ -25,36 +25,39 @@ namespace Digital.Infrastructure.Service
             var transaction = _context.Database.BeginTransaction();
             try
             {
-                var documentType = _context.DocumentTypes.FirstOrDefault(x => x.NormalizationName == model.Name.ToUpper());
+                var documentType = _context.DocumentTypes.FirstOrDefault(x => x.Name == model.Name);
+                if (model == null)
+                {
+                    result.Code = 400;
+                    result.IsSuccess = false;
+                    result.ResponseFailed = "Create DoccumentType Failed!";
+                    return result;
+                }
 
                 if (documentType != null)
                 {
                     result.Code = 400;
                     result.IsSuccess = false;
-                    result.ResponseFailed = "DocumentType Existed!";
+                    result.ResponseFailed = "DoccumentType Exist!";
                     return result;
                 }
-                if (documentType.Name == model.Name)
+
+
+                //add Entity
+                var documentT = new Data.Entities.DocumentType
                 {
-                    result.Code = 400;
-                    result.IsSuccess = false;
-                    result.ResponseFailed = "DocumentType Existed!";
-                    return result;
-                }
+                    Id = Guid.NewGuid(),
+                    Name = model.Name,
+                    NormalizationName = model.Name.ToUpper(),
+                    IsActive = true,
+                };
 
-                documentType = _mapper.Map<DocumentType>(model);
-                documentType.Id = Guid.NewGuid();
-                documentType.NormalizationName = model.Name.ToUpper();
-                documentType.IsActive = true;
 
-                await _context.DocumentTypes.AddAsync(documentType);
+                await _context.DocumentTypes.AddAsync(documentT);
                 await _context.SaveChangesAsync();
-
-                result.IsSuccess = true;
                 result.Code = 200;
-                result.ResponseSuccess = _mapper.Map<DocumentTypeViewModel>(documentType);
-
-                await transaction.CommitAsync();
+                result.IsSuccess = true;
+                result.ResponseSuccess = _mapper.Map<DocumentTypeViewModel>(documentT);
             }
             catch (Exception e)
             {
