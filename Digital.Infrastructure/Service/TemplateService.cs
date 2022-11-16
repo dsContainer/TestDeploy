@@ -187,6 +187,8 @@ namespace Digital.Infrastructure.Service
             BlobContainerClient container1 = new BlobContainerClient(_storageConnectionString, _storageContainerNameImage);
             await container.CreateIfNotExistsAsync();
             BlobClient client = container.GetBlobClient(model.templateFile.FileName);
+            
+
             BlobClient client1 = container1.GetBlobClient(model.jpg.FileName);
 
             try

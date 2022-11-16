@@ -119,76 +119,25 @@ namespace Digital.Infrastructure.Service
         {
             var result = new ResultModel();
             try
-            {
-                /*var SignatureIdByUserName = _context.Users.Where(x => x.Username.Contains(data) && x.IsActive == true)
-                                                .Select(x => x.SigId).ToList();
-                var SignatureIdByMail = _context.Users.Where(x => x.Email!.Contains(data) && x.IsActive == true)
-                                                .Select(x => x.SigId).ToList();
-                var SignatureIdByPhone = _context.Users.Where(x => x.Phone!.Contains(data) && x.IsActive == true)
-                                                .Select(x => x.SigId).ToList();
+            {   
+                var listUserId = _context.Users.Where(x=> x.Username.Contains(data) || x.Email.Contains(data) || x.Phone.Contains(data)).Select(x=>x.Id).ToList();  
+                List<SignatureSearchModel> signatures = new List<SignatureSearchModel>();
+                if (listUserId.Count != 0)
+                {
+                    foreach (var item in listUserId)
+                    {
+                        var listSignature =  _context.Signatures.Where(x => x.UserId == item).ToList();
+                        var signature = new SignatureSearchModel
+                        {
+                            UserId = item,
+                            
+                        };
+                    }
 
-                List<Guid> listSignatureId = new List<Guid>();
-                foreach (var IdAdd in SignatureIdByUserName)
-                {
-                    if (listSignatureId.Count == 0)
-                    {
-                        listSignatureId.Add(IdAdd);
-                    }
-                    else
-                    {
-                        foreach (var item in listSignatureId)
-                        {
-                            if (IdAdd != item)
-                            {
-                                listSignatureId.Add(IdAdd);
-                            }
-                        }
-                    }
                 }
-                foreach (var IdAdd in SignatureIdByMail)
-                {
-                    if (listSignatureId.Count == 0)
-                    {
-                        listSignatureId.Add(IdAdd);
-                    }
-                    else
-                    {
-                        foreach (var item in listSignatureId)
-                        {
-                            if (IdAdd != item)
-                            {
-                                listSignatureId.Add(IdAdd);
-                            }
-                        }
-                    }
-                }
-                foreach (var IdAdd in SignatureIdByPhone)
-                {
-                    if (listSignatureId.Count == 0)
-                    {
-                        listSignatureId.Add(IdAdd);
-                    }
-                    else
-                    {
-                        foreach (var item in listSignatureId)
-                        {
-                            if (IdAdd != item)
-                            {
-                                listSignatureId.Add(IdAdd);
-                            }
-                        }
-                    }
-                }
-                List<Signature> listSignature = new List<Signature>();
-                foreach (var item in listSignatureId)
-                {
-                    var signature = _context.Signatures.FirstOrDefault(x => x.Id == item);
-                    listSignature.Add(signature);
-                }
-
                 result.IsSuccess = true;
                 result.Code = 200;
-                result.ResponseSuccess = listSignature;*/
+                result.ResponseSuccess = signatures;
 
             }
             catch (Exception e)

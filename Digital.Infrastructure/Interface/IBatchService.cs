@@ -1,4 +1,5 @@
 ﻿using Digital.Infrastructure.Model;
+using Digital.Infrastructure.Model.BatchModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,6 @@ namespace Digital.Infrastructure.Interface
 {
     public interface IBatchService
     {
-        Task<ResultModel> createBatch();
+        Task<ResultModel> createBatch(CreateBatchModel model);
     }
 }
