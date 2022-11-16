@@ -234,6 +234,7 @@ namespace Digital.Infrastructure.Service
                     await _context.SaveChangesAsync();
                     result.IsSuccess = true;
                     result.Code = 200;
+                    result.ResponseSuccess = newTemplate;
                 }
             }
             catch (Exception e)

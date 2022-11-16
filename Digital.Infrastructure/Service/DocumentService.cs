@@ -87,7 +87,7 @@ namespace Digital.Infrastructure.Service
                     DocumentTypeId = model.DocumentTypeId,
                     ProcessId = model.ProcessId,
                     OwnerId = Guid.Parse(ownId),
-                    Owner = _context.Users.FirstOrDefault(x => !x.IsActive && x.Id == Guid.Parse(ownId))
+                    Owner = _context.Users.FirstOrDefault(x => x.Id == Guid.Parse(ownId))
                 };
                
 
@@ -128,7 +128,7 @@ namespace Digital.Infrastructure.Service
             var result = new ResultModel();
             try
             {
-                var doc = _context.Documents.Where(x => !x.IsActive);
+                var doc = _context.Documents;
 
                 if (doc == null)
                 {
@@ -230,7 +230,7 @@ namespace Digital.Infrastructure.Service
             var result = new ResultModel();
             try
             {   
-                var doc = _context.Documents.Where(x => x.IsActive && x.Id == id);
+                var doc = _context.Documents.Where(x => x.Id == id);
 
                 if (doc == null)
                 {
@@ -259,7 +259,7 @@ namespace Digital.Infrastructure.Service
         {
            
                 var document = await _context.Documents
-                .FirstOrDefaultAsync(x => x.Id == id && !x.IsActive);
+                .FirstOrDefaultAsync(x => x.Id == id);
                 BlobContainerClient client = new BlobContainerClient(_storageConnectionString, _storageContainerName);
                 try
             {
@@ -293,7 +293,7 @@ namespace Digital.Infrastructure.Service
             try
             {
                 var documents = _context.Documents
-                    .Where(x => !x.IsActive && (x.OwnerId == _userContext.UserID));
+                    .Where(x =>x.OwnerId == _userContext.UserID);
 
                 if (documents == null || documents.Count() < 0)
                 {
