@@ -45,7 +45,7 @@ namespace DigitalSignature.Controllers
         {
             var result = await _service.GetDocumentTypeById(Id);
 
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
 
@@ -83,7 +83,7 @@ namespace DigitalSignature.Controllers
         /// <param name="Id"></param>
         /// <returns></returns>
         [HttpPut("{Id}")]
-        public async Task<IActionResult> Update(Guid Id, [FromQuery] DocumentTypeUpdateModel model)
+        public async Task<IActionResult> Update(Guid Id, DocumentTypeUpdateModel model)
         {
             var result = await _service.UpdateDocumentType(Id, model);
 
