@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DigitalSignature.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
+    //[Authorize]
     [ApiController]
     public class SignatureController : ControllerBase
     {
@@ -30,7 +30,7 @@ namespace DigitalSignature.Controllers
         {
             var result = await _service.GetListSignature();
 
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
 
@@ -45,7 +45,7 @@ namespace DigitalSignature.Controllers
         {
             var result = await _service.CreateSignatureByUserId(userId);
 
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
 
@@ -60,7 +60,7 @@ namespace DigitalSignature.Controllers
         {
             var result = await _service.SearchContainUserNamePhoneOrEmail(data);
 
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
 
@@ -75,7 +75,7 @@ namespace DigitalSignature.Controllers
         {
             var result = await _service.SearchBySignatureId(sigId);
 
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
 
@@ -90,7 +90,7 @@ namespace DigitalSignature.Controllers
         {
             var result = await _service.SearchRangeDate(fromDate, toDate);
 
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
 
@@ -105,7 +105,7 @@ namespace DigitalSignature.Controllers
         {
             var result = await _service.SignPDF(signModel);
 
-            if (result.IsSuccess && result.Code == 200) return Ok(result.ResponseSuccess);
+            if (result.IsSuccess && result.Code == 200) return Ok(result);
             return BadRequest(result);
         }
     }

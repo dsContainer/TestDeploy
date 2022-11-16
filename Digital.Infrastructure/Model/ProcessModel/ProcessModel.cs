@@ -1,4 +1,4 @@
-﻿using Digital.Data.Entities;
+﻿    using Digital.Data.Entities;
 
 namespace Digital.Infrastructure.Model.ProcessModel
 {
