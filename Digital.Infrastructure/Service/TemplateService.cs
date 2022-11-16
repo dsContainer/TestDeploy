@@ -68,45 +68,35 @@ namespace Digital.Infrastructure.Service
             try
             {
                 var listTemplate = await _context.Templates.ToListAsync();
-
-                if (listTemplate.Count != 0)
+                var listTemplateToResult = new List<TemplateViewModel>();
+                foreach (var item in listTemplate)
                 {
-                    var listTemplateToResult = new List<TemplateViewModel>();
-                    foreach (var item in listTemplate)
+                    var documentTypeToPaste = _context.DocumentTypes.FirstOrDefault(x => x.Id == item.DocumentTypeId);
+                    var TemplateToResult = new TemplateViewModel
                     {
-                        var documentTypeToPaste = _context.DocumentTypes.FirstOrDefault(x => x.Id == item.DocumentTypeId);
-                        var TemplateToResult = new TemplateViewModel
+                        id = item.Id,
+                        name = item.Name,
+                        normalizationName = item.NormalizationName,
+                        description = item.Description,
+                        imgUrl = item.ImgUrl,
+                        ExlUrl = item.ExlUrl,
+                        documentType = new Model.TemplateModel.DocumentTypeViewModel
                         {
-                            id = item.Id,
-                            name = item.Name,
-                            normalizationName = item.NormalizationName,
-                            description = item.Description,
-                            imgUrl = item.ImgUrl,
-                            ExlUrl = item.ExlUrl,
-                            documentType = new Model.TemplateModel.DocumentTypeViewModel
-                            {
-                                id = documentTypeToPaste.Id,
-                                name = documentTypeToPaste.Name,
-                                normalizationName = documentTypeToPaste.NormalizationName,
-                                IsActive = documentTypeToPaste.IsActive,
-                            },
-                            dateCreated = item.DateCreated,
-                            dateUpdated = item.DateUpdated,
-                            IsActive = item.IsActive
-                        };
-                        listTemplateToResult.Add(TemplateToResult);
-                    }
+                            id = documentTypeToPaste.Id,
+                            name = documentTypeToPaste.Name,
+                            normalizationName = documentTypeToPaste.NormalizationName,
+                            IsActive = documentTypeToPaste.IsActive,
+                        },
+                        dateCreated = item.DateCreated,
+                        dateUpdated = item.DateUpdated,
+                        IsActive = item.IsActive
+                    };
+                    listTemplateToResult.Add(TemplateToResult);
+                }
 
-                    result.IsSuccess = true;
-                    result.Code = 200;
-                    result.ResponseSuccess = listTemplateToResult;
-                }
-                else
-                {
-                    result.IsSuccess = false;
-                    result.Code = 400;
-                    result.ResponseFailed = "Dont have any template";
-                }
+                result.IsSuccess = true;
+                result.Code = 200;
+                result.ResponseSuccess = listTemplateToResult;
             }
             catch (Exception e)
             {
@@ -124,8 +114,6 @@ namespace Digital.Infrastructure.Service
             try
             {
                 var template = _context.Templates.FirstOrDefault(x => x.Id == TempalateId);
-                if (template != null)
-                {
                     var documentType = _context.DocumentTypes.FirstOrDefault(x => x.Id == template.DocumentTypeId);
                     var templateToResult = new TemplateViewModel
                     {
@@ -148,13 +136,6 @@ namespace Digital.Infrastructure.Service
                     result.IsSuccess = true;
                     result.Code = 200;
                     result.ResponseSuccess = templateToResult;
-                }
-                else
-                {
-                    result.IsSuccess = false;
-                    result.Code = 400;
-                    result.ResponseSuccess = "Template dont found";
-                }
             }
             catch (Exception e)
             {
@@ -225,7 +206,7 @@ namespace Digital.Infrastructure.Service
                         await client1.UploadAsync(data1);
                     }
                     await using (Stream? data = model.templateFile.OpenReadStream())
-                    {   
+                    {
                         await client.UploadAsync(data);
                     }
                     response.Status = $"File {model.templateFile.FileName} Uploaded Successfully";
