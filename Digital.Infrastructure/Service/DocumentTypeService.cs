@@ -34,7 +34,7 @@ namespace Digital.Infrastructure.Service
                     result.ResponseFailed = "DocumentType Existed!";
                     return result;
                 }
-                if(documentType.Name == model.Name)
+                if (documentType.Name == model.Name)
                 {
                     result.Code = 400;
                     result.IsSuccess = false;
